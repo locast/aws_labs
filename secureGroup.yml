@@ -3,24 +3,8 @@ Resources:
   privateSecGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: "privateSubnet_mlm"
-      GroupDescription: "private subnet rules"
-      SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 22
-        ToPort: 22
-        CidrIp: 0.0.0.0/0
-      VpcId: !Ref ---
-      Tags: 
-        -
-          Key: "Name"
-          Value: "privateSubnet_mlm"
-
-  pubSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: "publicSubnet_mlm"
-      GroupDescription: "public subnet rules"
+      GroupName: "PrivateSecureGroup-mlm"
+      GroupDescription: "private security group rules"
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 12376
@@ -107,4 +91,22 @@ Resources:
       Tags: 
         -
           Key: "Name"
-          Value: "publicSubnet_mlm"
+          Value: "PrivateSecurityGrp-mlm"
+
+  pubSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "publicSecureGroup-mlm"
+      GroupDescription: "public security group rules"
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      VpcId: !Ref ---
+      Tags: 
+        -
+          Key: "Name"
+          Value: "publicSecurityGrp-mlm"
+
+
