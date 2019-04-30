@@ -1,0 +1,110 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  privateSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "privateSubnet_mlm"
+      GroupDescription: "private subnet rules"
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      VpcId: !Ref ---
+      Tags: 
+        -
+          Key: "Name"
+          Value: "privateSubnet_mlm"
+
+  pubSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "publicSubnet_mlm"
+      GroupDescription: "public subnet rules"
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 12376
+        ToPort: 12388
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 10250
+        ToPort: 10250
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 9099
+        ToPort: 9099
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 7946
+        ToPort: 7946
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: udp
+        FromPort: 7946
+        ToPort: 7946
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 6443 
+        ToPort: 6444
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: udp
+        FromPort: 4789 
+        ToPort: 4789 
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 2376  
+        ToPort: 2377 
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 443   
+        ToPort: 443  
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 179  
+        ToPort: 179 
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 12376
+        ToPort: 12388
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 10250
+        ToPort: 10250
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 9099
+        ToPort: 9099
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 7946
+        ToPort: 7946
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: udp
+        FromPort: 7946
+        ToPort: 7946
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 6443 
+        ToPort: 6444
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: udp
+        FromPort: 4789 
+        ToPort: 4789 
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 2376  
+        ToPort: 2377 
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 443   
+        ToPort: 443  
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 179  
+        ToPort: 179 
+        CidrIp: 0.0.0.0/0
+      VpcId: !Ref ---
+      Tags: 
+        -
+          Key: "Name"
+          Value: "publicSubnet_mlm"
