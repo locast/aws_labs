@@ -53,14 +53,6 @@ Resources:
           Value: InternetGateway-mlm
     DependsOn: VPC
 
-  InternetGatewayLB:
-    Type: 'AWS::EC2::InternetGateway'
-    Properties:
-      Tags:
-        - Key: Name
-          Value: InternetGatewayLB-mlm
-    DependsOn: VPC
-
   NatGateway:
     Type: 'AWS::EC2::NatGateway'
     Properties:
@@ -79,11 +71,11 @@ Resources:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
 
-  VPCGatewayAttachmentLB:
-    Type: 'AWS::EC2::VPCGatewayAttachment'
-    Properties:
-      InternetGatewayId: !Ref InternetGatewayLB
-      VpcId: !Ref VPC
+#  VPCGatewayAttachmentLB:
+#    Type: 'AWS::EC2::VPCGatewayAttachment'
+#    Properties:
+#      InternetGatewayId: !Ref InternetGatewayLB
+#      VpcId: !Ref VPC
 
   PublicRouteTable:
     Type: 'AWS::EC2::RouteTable'
@@ -120,7 +112,7 @@ Resources:
     Type: 'AWS::EC2::Route'
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGatewayLB
+      GatewayId: !Ref InternetGateway
       RouteTableId: !Ref PublicRouteTableLB
 
   PrivateRoute:
@@ -243,7 +235,7 @@ Resources:
 
 Outputs:
 
-  VPCId:
+  VPCID:
     Description: VPC ID
     Value: !Ref VPC
     Export:

@@ -19,7 +19,7 @@ Resources:
   Network_stack: 
     Type: AWS::CloudFormation::Stack
     Properties: 
-      TemplateURL: ""
+      TemplateURL: "https://s3-external-1.amazonaws.com/cf-templates-1ibdpp5pqstbs-us-east-1/2019122HwN-new.templateryw9hgzt8gk"
     Tags:
       -  Key: Name
          Value: ${Network_stack_name}
@@ -27,7 +27,7 @@ Resources:
   Instances_stack: 
     Type: AWS::CloudFormation::Stack
     Properties: 
-      TemplateURL: ""
+      TemplateURL: "https://s3-external-1.amazonaws.com/cf-templates-1ibdpp5pqstbs-us-east-1/2019122rDG-new.templateljdl5eahfvi"
       Parameters: 
         Network_stack: ${Network_stack_name}
       Tags:

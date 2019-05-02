@@ -43,10 +43,10 @@ Resources:
       HealthCheckEnabled: yes
       HealthCheckIntervalSeconds: 300
       HealthCheckPort: 443
-      HealthCheckProtocol: "HTTPS"
+      HealthCheckProtocol: "HTTP"
       Name: "UCPGrp"
       Port: 443
-      Protocol: "HTTPS"
+      Protocol: "HTTP"
       VpcId: !ImportValue 
         'Fn::Sub': '${NetworkStack}-VPCID'
       TargetType: instance 
@@ -74,10 +74,10 @@ Resources:
       HealthCheckEnabled: yes
       HealthCheckIntervalSeconds: 300
       HealthCheckPort: 443
-      HealthCheckProtocol: "HTTPS"
+      HealthCheckProtocol: "HTTP"
       Name: "DTRGrp"
       Port: 80
-      Protocol: "HTTPS"
+      Protocol: "HTTP"
       VpcId: !ImportValue 
         'Fn::Sub': '${NetworkStack}-VPCID'
       TargetType: instance 
@@ -95,12 +95,12 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties: 
       HealthCheckEnabled: yes
-      HealthCheckIntervalSeconds: 350
+      HealthCheckIntervalSeconds: 300
       HealthCheckPort: 8080
-      HealthCheckProtocol: "HTTPS"
-      Name: "UCPGrp"
+      HealthCheckProtocol: "HTTP"
+      Name: "AppGrp"
       Port: 8080
-      Protocol: "HTTPS"
+      Protocol: "HTTP"
       VpcId: !ImportValue 
         'Fn::Sub': '${NetworkStack}-VPCID'
       TargetType: instance 
@@ -130,28 +130,28 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties: 
       DefaultActions:
-        Type: "forward"
+      - Type: "forward"
         TargetGroupArn: !Ref UCPGrp
       LoadBalancerArn: !Ref LoadBalancer
       Port: 443
-      Protocol : "HTTPS"
+      Protocol : "HTTP"
 
   ListenerDTR:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties: 
       DefaultActions:
-        Type: "forward"
+      - Type: "forward"
         TargetGroupArn: !Ref DTRGrp
       LoadBalancerArn: !Ref LoadBalancer
-      Port: 443
-      Protocol : "HTTPS"
+      Port: 80
+      Protocol : "HTTP"
 
   ListenerAPP:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties: 
       DefaultActions:
-        Type: "forward"
+      - Type: "forward"
         TargetGroupArn: !Ref AppGrp
       LoadBalancerArn: !Ref LoadBalancer
-      Port: 443
-      Protocol : "HTTPS"
+      Port: 8080
+      Protocol : "HTTP"
