@@ -1,6 +1,158 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: "Ec2 block device mapping"
 Resources: 
+  VPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 172.30.0.0/24
+      Tags:
+        - Key: Name
+          Value: VPC-mlm
+
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: InternetGateway-mlm
+    DependsOn: VPC
+
+  VPCGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+
+  PublicSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 172.30.0.0/27
+      Tags:
+        - Key: Name
+          Value: PublicSubnet-mlm
+    DependsOn: VPC
+
+  EIP:
+    Type: 'AWS::EC2::EIP'
+    DependsOn: PublicSubnet
+
+  NatGateway:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt 
+        - EIP
+        - AllocationId
+      SubnetId: !Ref PublicSubnet
+      Tags:
+        - Key: Name
+          Value: NatGateway-mlm
+    DependsOn: EIP
+
+  InternetGatewayLB:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: InternetGatewayLB-mlm
+    DependsOn: VPC
+
+  VPCGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      InternetGatewayId: !Ref InternetGatewayLB
+      VpcId: !Ref VPC
+
+  PublicSubnetLB:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: us-east-1b
+      CidrBlock: 172.30.0.64/27
+      Tags:
+        - Key: Name
+          Value: PublicSubnetLB-mlm
+    DependsOn: VPC
+
+  PublicRouteTableLB:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PublicRouteTableLB-mlm
+
+  PublicRouteLB:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGatewayLB
+      RouteTableId: !Ref PublicRouteTableLB
+
+  PublicSubnetRouteTableAssociationLB:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PublicRouteTableLB
+      SubnetId: !Ref PublicSubnetLB
+    DependsOn: PublicRouteTableLB
+
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PublicRouteTable-mlm
+
+
+  PublicRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref PublicRouteTable
+
+
+  PublicSubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet
+    DependsOn: PublicRouteTable
+
+
+  PrivateSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      #AvailabilityZone: us-east-1b
+      CidrBlock: 172.30.0.32/27
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet-mlm
+
+
+  PrivateRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTable-mlm
+
+  PrivateRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+      RouteTableId: !Ref PrivateRouteTable
+
+  PrivateSubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet
+    DependsOn: PrivateRouteTable
   LBSecureGrp:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -29,7 +181,7 @@ Resources:
       Scheme: "internet-facing"
       SecurityGroups: [!Ref LBSecureGrp]
       #SubnetMappings: [!Ref ---]
-      Subnets: [!Ref PublicSubnet]
+      Subnets: [!Ref PublicSubnet, !Ref PrivateSubnet]
       Type: "application"
       Tags:
         -
@@ -40,7 +192,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties: 
       HealthCheckEnabled: yes
-      HealthCheckIntervalSeconds: 350
+      HealthCheckIntervalSeconds: 300
       HealthCheckPort: 443
       HealthCheckProtocol: "HTTPS"
       Name: "UCPGrp"
@@ -77,7 +229,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties: 
       HealthCheckEnabled: yes
-      HealthCheckIntervalSeconds: 350
+      HealthCheckIntervalSeconds: 300
       HealthCheckPort: 443
       HealthCheckProtocol: "HTTPS"
       Name: "DTRGrp"
@@ -281,6 +433,7 @@ Resources:
       Tags:
         - Key: Name
           Value: PrivateSecurityGrp-mlm
+
   pubSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -295,121 +448,3 @@ Resources:
       Tags:
         - Key: Name
           Value: publicSecurityGrp-mlm
-
-
-
-
-  VPC:
-    Type: 'AWS::EC2::VPC'
-    Properties:
-      CidrBlock: 172.30.0.0/24
-      Tags:
-        - Key: Name
-          Value: VPC-mlm
-
-
-  InternetGateway:
-    Type: 'AWS::EC2::InternetGateway'
-    Properties:
-      Tags:
-        - Key: Name
-          Value: InternetGateway-mlm
-    DependsOn: VPC
-
-
-  VPCGatewayAttachment:
-    Type: 'AWS::EC2::VPCGatewayAttachment'
-    Properties:
-      InternetGatewayId: !Ref InternetGateway
-      VpcId: !Ref VPC
-
-
-  PublicSubnet:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: us-east-1a
-      CidrBlock: 172.30.0.0/27
-      Tags:
-        - Key: Name
-          Value: PublicSubnet-mlm
-    DependsOn: VPC
-
-
-  EIP:
-    Type: 'AWS::EC2::EIP'
-    DependsOn: PublicSubnet
-
-
-  NatGateway:
-    Type: 'AWS::EC2::NatGateway'
-    Properties:
-      AllocationId: !GetAtt 
-        - EIP
-        - AllocationId
-      SubnetId: !Ref PublicSubnet
-      Tags:
-        - Key: Name
-          Value: NatGateway-mlm
-    DependsOn: EIP
-
-
-  PublicRouteTable:
-    Type: 'AWS::EC2::RouteTable'
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: PublicRouteTable-mlm
-
-
-  PublicRoute:
-    Type: 'AWS::EC2::Route'
-    Properties:
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGateway
-      RouteTableId: !Ref PublicRouteTable
-
-
-  PublicSubnetRouteTableAssociation:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet
-    DependsOn: PublicRouteTable
-
-
-  PrivateSubnet:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: us-east-1b
-      CidrBlock: 172.30.0.32/27
-      Tags:
-        - Key: Name
-          Value: PrivateSubnet-mlm
-
-
-  PrivateRouteTable:
-    Type: 'AWS::EC2::RouteTable'
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: PrivateRouteTable-mlm
-
-
-  PrivateRoute:
-    Type: 'AWS::EC2::Route'
-    Properties:
-      DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway
-      RouteTableId: !Ref PrivateRouteTable
-
- 
-  PrivateSubnetRouteTableAssociation:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      SubnetId: !Ref PrivateSubnet
-    DependsOn: PrivateRouteTable
