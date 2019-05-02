@@ -1,0 +1,245 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  AWSTemplateFormatVersion: 2010-09-09
+Description: "Ec2 block device mapping"
+Resources: 
+  MyEC2Instance1: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.nano"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Manager1"
+        SecurityGroupIds: [!Ref privateSecGroup]
+        KeyName: "devops_key"
+        SubnetId: 
+          Ref: PrivateSubnet
+    
+  MyEC2Instance2: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.nano"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Manager2"
+        SecurityGroupIds: [!Ref privateSecGroup]
+        KeyName: "devops_key"
+        SubnetId: 
+          Ref: PrivateSubnet
+ 
+  MyEC2Instance3: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.nano"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Manager3"
+        SecurityGroupIds: [!Ref privateSecGroup]
+        KeyName: "devops_key"
+        SubnetId: 
+          Ref: PrivateSubnet
+
+  MyEC2Instance4: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.nano"
+        ImageId: "ami-0a313d6098716f372"
+        Tags: 
+          -
+            Key: "Name"
+            Value: "worker"
+        SecurityGroupIds: [!Ref privateSecGroup]
+        KeyName: "devops_key"
+        SubnetId: 
+          Ref: PrivateSubnet
+
+  MyEC2Instance5: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.nano"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "DTR"
+        SecurityGroupIds: [!Ref privateSecGroup]
+        KeyName: "devops_key"
+        SubnetId: 
+          Ref: PrivateSubnet
+
+  MyEC2Instance6: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.nano"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Bastion"
+        SecurityGroupIds: [!Ref pubSecurityGroup]
+        KeyName: "devops_key"
+        SubnetId: 
+          Ref: PublicSubnet
+
+  privateSecGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: PrivateSecureGroup-mlm
+      GroupDescription: private security group rules
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 12376
+          ToPort: 12388
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 10250
+          ToPort: 10250
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 9099
+          ToPort: 9099
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 7946
+          ToPort: 7946
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: udp
+          FromPort: 7946
+          ToPort: 7946
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 6443
+          ToPort: 6444
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: udp
+          FromPort: 4789
+          ToPort: 4789
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 2376
+          ToPort: 2377
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 179
+          ToPort: 179
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PrivateSecurityGrp-mlm
+  pubSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: publicSecureGroup-mlm
+      GroupDescription: public security group rules
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: publicSecurityGrp-mlm
+  VPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 172.30.0.0/24
+      Tags:
+        - Key: Name
+          Value: VPC-mlm
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: InternetGateway-mlm
+    DependsOn: VPC
+  VPCGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+  PublicSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 172.30.0.0/27
+      Tags:
+        - Key: Name
+          Value: PublicSubnet-mlm
+    DependsOn: VPC
+  EIP:
+    Type: 'AWS::EC2::EIP'
+    DependsOn: PublicSubnet
+  NatGateway:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt 
+        - EIP
+        - AllocationId
+      SubnetId: !Ref PublicSubnet
+      Tags:
+        - Key: Name
+          Value: NatGateway-mlm
+    DependsOn: EIP
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PublicRouteTable-mlm
+  PublicRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet
+    DependsOn: PublicRouteTable
+  PrivateSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 172.30.0.32/27
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet-mlm
+  PrivateRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTable-mlm
+  PrivateRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+      RouteTableId: !Ref PrivateRouteTable
+  PrivateSubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet
+    DependsOn: PrivateRouteTable
