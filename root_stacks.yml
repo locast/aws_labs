@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Docker cluster root stack"
+Parameters:
+  Network_stack_name:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedPattern: '^[a-zA-Z][-a-zA-Z0-9]*$'
+    Default: Network-mlm
+
+  Instances_stack_name: 
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedPattern: '^[a-zA-Z][-a-zA-Z0-9]*$'
+    Default: Instances-mlm
+
+Resources: 
+  Network_stack: 
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      TemplateURL: ""
+    Tags:
+      -  Key: Name
+         Value: ${Network_stack_name}
+
+  Instances_stack: 
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      TemplateURL: ""
+      Parameters: 
+        Network_stack: ${Network_stack_name}
+      Tags:
+      -  Key: Name
+         Value: ${Instances_stack_name}
+    DependsOn: Network_stack
+
+  LoadBalancer_stack: 
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      TemplateURL: ""
+      Parameters:
+        Instances_stack: ${Network_stack_name}
+        Network_stack: ${Instances_stack_name}
+      Tags:
+      -  Key: Name
+         Value: LoadBalancer-mlm
+    DependsOn: Instances_stack

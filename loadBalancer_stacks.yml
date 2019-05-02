@@ -1,0 +1,157 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Docker cluster LoadBalancer"
+Parameters:
+  NetworkStack:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedPattern: '^[a-zA-Z][-a-zA-Z0-9]*$'
+    Default: NetworkStack
+  
+  InstancesStack:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedPattern: '^[a-zA-Z][-a-zA-Z0-9]*$'
+    Default: InstancesStack
+
+Resources: 
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties: 
+      IpAddressType: "ipv4"
+      Name: "LoadBalancer-mlm"
+      Scheme: "internet-facing"
+      SecurityGroups: 
+          - !ImportValue 
+            'Fn::Sub': '${NetworkStack}-LBSecureGrpID'
+      #SubnetMappings: [!Ref ---]
+      Subnets: 
+          - !ImportValue 
+            'Fn::Sub': '${NetworkStack}-PublicSubnetID'
+          - !ImportValue 
+            'Fn::Sub': '${NetworkStack}-PublicSubnetLBID'
+      Type: "application"
+      Tags:
+        -
+          Key: "name"
+          Value: "LoadBalancer-mlm"
+
+  UCPGrp:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties: 
+      HealthCheckEnabled: yes
+      HealthCheckIntervalSeconds: 300
+      HealthCheckPort: 443
+      HealthCheckProtocol: "HTTPS"
+      Name: "UCPGrp"
+      Port: 443
+      Protocol: "HTTPS"
+      VpcId: !ImportValue 
+        'Fn::Sub': '${NetworkStack}-VPCID'
+      TargetType: instance 
+      Targets: 
+        -
+          Id: !ImportValue 
+            'Fn::Sub': '${InstancesStack}-Manager1ID'
+          Port: 443
+        -
+          Id: !ImportValue 
+            'Fn::Sub': '${InstancesStack}-Manager2ID'
+          Port: 443
+        -
+          Id: !ImportValue 
+            'Fn::Sub': '${InstancesStack}-Manager3ID'
+          Port: 443
+      Tags:
+        -
+          Key: "name"
+          Value: "UCPGrp-mlm"
+
+  DTRGrp:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties: 
+      HealthCheckEnabled: yes
+      HealthCheckIntervalSeconds: 300
+      HealthCheckPort: 443
+      HealthCheckProtocol: "HTTPS"
+      Name: "DTRGrp"
+      Port: 80
+      Protocol: "HTTPS"
+      VpcId: !ImportValue 
+        'Fn::Sub': '${NetworkStack}-VPCID'
+      TargetType: instance 
+      Targets: 
+        -
+          Id: !ImportValue 
+            'Fn::Sub': '${InstancesStack}-WorkerDTRID'
+          Port: 443
+      Tags:
+        -
+          Key: "name"
+          Value: "DTRGrp-mlm"
+
+  AppGrp:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties: 
+      HealthCheckEnabled: yes
+      HealthCheckIntervalSeconds: 350
+      HealthCheckPort: 8080
+      HealthCheckProtocol: "HTTPS"
+      Name: "UCPGrp"
+      Port: 8080
+      Protocol: "HTTPS"
+      VpcId: !ImportValue 
+        'Fn::Sub': '${NetworkStack}-VPCID'
+      TargetType: instance 
+      Targets: 
+        -
+          Id: !ImportValue 
+            'Fn::Sub': '${InstancesStack}-Manager1ID'
+          Port: 443
+        -
+          Id: !ImportValue 
+            'Fn::Sub': '${InstancesStack}-Manager2ID'
+          Port: 443
+        -
+          Id: !ImportValue 
+            'Fn::Sub': '${InstancesStack}-Manager3ID'
+          Port: 443
+        -
+          Id: !ImportValue 
+            'Fn::Sub': '${InstancesStack}-WorkerID'
+          Port: 443
+        -
+          Id: !ImportValue 
+            'Fn::Sub': '${InstancesStack}-WorkerDTRID'
+          Port: 443
+
+  ListenerUCP:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties: 
+      DefaultActions:
+        Type: "forward"
+        TargetGroupArn: !Ref UCPGrp
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 443
+      Protocol : "HTTPS"
+
+  ListenerDTR:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties: 
+      DefaultActions:
+        Type: "forward"
+        TargetGroupArn: !Ref DTRGrp
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 443
+      Protocol : "HTTPS"
+
+  ListenerAPP:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties: 
+      DefaultActions:
+        Type: "forward"
+        TargetGroupArn: !Ref AppGrp
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 443
+      Protocol : "HTTPS"

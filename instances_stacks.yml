@@ -1,0 +1,145 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Docker cluster with Bastion"
+Parameters:
+  NetworkStack:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedPattern: '^[a-zA-Z][-a-zA-Z0-9]*$'
+    Default: NetworkStack
+
+Resources: 
+  Manager1: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.medium"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Manager1"
+        SecurityGroupIds: 
+          - !ImportValue 
+            'Fn::Sub': '${NetworkStack}-privateSecGroupID'
+        KeyName: "devops_key"
+        SubnetId: !ImportValue
+          'Fn::Sub': '${NetworkStack}-PrivateSubnetID'
+    
+  Manager2: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.medium"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Manager2"
+        SecurityGroupIds: 
+          - !ImportValue 
+            'Fn::Sub': '${NetworkStack}-privateSecGroupID'
+        KeyName: "devops_key"
+        SubnetId: !ImportValue
+          'Fn::Sub': '${NetworkStack}-PrivateSubnetID'
+ 
+  Manager3: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.medium"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Manager3"
+        SecurityGroupIds: 
+          - !ImportValue 
+            'Fn::Sub': '${NetworkStack}-privateSecGroupID'
+        KeyName: "devops_key"
+        SubnetId: !ImportValue
+          'Fn::Sub': '${NetworkStack}-PrivateSubnetID'
+
+  Worker: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.medium"
+        ImageId: "ami-0a313d6098716f372"
+        Tags: 
+          -
+            Key: "Name"
+            Value: "worker"
+        SecurityGroupIds: 
+          - !ImportValue 
+            'Fn::Sub': '${NetworkStack}-privateSecGroupID'
+        KeyName: "devops_key"
+        SubnetId: !ImportValue
+          'Fn::Sub': '${NetworkStack}-PrivateSubnetID'
+
+  WorkerDTR: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.medium"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "DTR"
+        SecurityGroupIds: 
+          - !ImportValue 
+            'Fn::Sub': '${NetworkStack}-privateSecGroupID'
+        KeyName: "devops_key"
+        SubnetId: !ImportValue
+          'Fn::Sub': '${NetworkStack}-PrivateSubnetID'
+
+  Bastion: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.nano"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Bastion"
+        SecurityGroupIds: 
+          - !ImportValue 
+            'Fn::Sub': '${NetworkStack}-pubSecurityGroupID'
+        KeyName: "devops_key"
+        SubnetId: !ImportValue
+          'Fn::Sub': '${NetworkStack}-PublicSubnetID'
+Outputs:
+
+  Manager1:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref Manager1
+    Export:
+      Name: !Sub '${AWS::StackName}-Manager1ID'
+
+  Manager2:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref Manager2
+    Export:
+      Name: !Sub '${AWS::StackName}-Manager2ID'
+
+  Manager3:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref Manager3
+    Export:
+      Name: !Sub '${AWS::StackName}-Manager3ID'
+
+  Worker:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref Worker
+    Export:
+      Name: !Sub '${AWS::StackName}-WorkerID'
+
+  WorkerDTR:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref WorkerDTR
+    Export:
+      Name: !Sub '${AWS::StackName}-WorkerDTRID'
+
+  Bastion:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref Bastion
+    Export:
+      Name: !Sub '${AWS::StackName}-BastionID'
+
+
