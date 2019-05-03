@@ -3,36 +3,21 @@ Description: "Docker cluster LoadBalancer"
 Parameters:
   UCPGPort:
     Type: Number
-    Default: 443
   
   UCPGProtocol:
     Type: String
-    AllowedValues: 
-      - HTTP
-      - HTTPS
-    Default: HTTP
 
   DTRGPort:
     Type: Number
-    Default: 80
       
   DTRProtocol:
     Type: String
-    AllowedValues: 
-      - HTTP
-      - HTTPS
-    Default: HTTP
 
   AppPort:
     Type: Number
-    Default: 8080
 
   AppProtocol:
     Type: String
-    AllowedValues: 
-      - HTTP
-      - HTTPS
-    Default: HTTP
 
 Resources: 
   LoadBalancer:

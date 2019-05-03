@@ -3,48 +3,12 @@ Description: "Network for Docker lab"
 Parameters:  
   PublicSubnetCdir:
     Type: String
-    MinLength: 9
-    MaxLength: 18
-    AllowedValues: 
-      - 172.30.0.0/24
-      - 172.30.0.32/24
-      - 172.30.0.64/24
-      - 172.30.0.96/24
-      - 172.30.0.128/24
-      - 172.30.0.160/24
-      - 172.30.0.192/24
-      - 172.30.0.224/24
-    Default: 172.30.0.0/24
 
   LBSubnetCdir:
     Type: String
-    MinLength: 9
-    MaxLength: 18
-    AllowedValues: 
-      - 172.30.0.0/24
-      - 172.30.0.32/24
-      - 172.30.0.64/24
-      - 172.30.0.96/24
-      - 172.30.0.128/24
-      - 172.30.0.160/24
-      - 172.30.0.192/24
-      - 172.30.0.224/24
-    Default: 172.30.0.32/24
 
-  PrivateSubnetCdir:
+  PrivateSubnetCdir: 
     Type: String
-    MinLength: 9
-    MaxLength: 18
-    AllowedValues: 
-      - 172.30.0.0/24
-      - 172.30.0.32/24
-      - 172.30.0.64/24
-      - 172.30.0.96/24
-      - 172.30.0.128/24
-      - 172.30.0.160/24
-      - 172.30.0.192/24
-      - 172.30.0.224/24
-    Default: 172.30.0.64/24
 
 Resources: 
   VPC:

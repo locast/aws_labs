@@ -3,48 +3,48 @@ Description: Docker cluster root stack
 Parameters:
   PublicSubnetCdir:
     Type: String
-    MinLength: 9
-    MaxLength: 18
+    MinLength: 8
+    MaxLength: 19
     AllowedValues: 
-      - 172.30.0.0/24
-      - 172.30.0.32/24
-      - 172.30.0.64/24
-      - 172.30.0.96/24
-      - 172.30.0.128/24
-      - 172.30.0.160/24
-      - 172.30.0.192/24
-      - 172.30.0.224/24
-    Default: 172.30.0.0/24
+      - 172.30.0.0/27
+      - 172.30.0.32/27
+      - 172.30.0.64/27
+      - 172.30.0.96/27
+      - 172.30.0.128/27
+      - 172.30.0.160/27
+      - 172.30.0.192/27
+      - 172.30.0.225/27
+    Default: 172.30.0.0/27
 
-  LBSubnetCdir:
+  LoadBSubnetCdir:
     Type: String
-    MinLength: 9
-    MaxLength: 18
+    MinLength: 8
+    MaxLength: 19
     AllowedValues: 
-      - 172.30.0.0/24
-      - 172.30.0.32/24
-      - 172.30.0.64/24
-      - 172.30.0.96/24
-      - 172.30.0.128/24
-      - 172.30.0.160/24
-      - 172.30.0.192/24
-      - 172.30.0.224/24
-    Default: 172.30.0.32/24
+      - 172.30.0.0/27
+      - 172.30.0.32/27
+      - 172.30.0.64/27
+      - 172.30.0.96/27
+      - 172.30.0.128/27
+      - 172.30.0.160/27
+      - 172.30.0.192/27
+      - 172.30.0.225/27
+    Default: 172.30.0.32/27
 
   PrivateSubnetCdir:
     Type: String
-    MinLength: 9
-    MaxLength: 18
+    MinLength: 8
+    MaxLength: 19
     AllowedValues: 
-      - 172.30.0.0/24
-      - 172.30.0.32/24
-      - 172.30.0.64/24
-      - 172.30.0.96/24
-      - 172.30.0.128/24
-      - 172.30.0.160/24
-      - 172.30.0.192/24
-      - 172.30.0.224/24
-    Default: 172.30.0.64/24
+      - 172.30.0.0/27
+      - 172.30.0.32/27
+      - 172.30.0.64/27
+      - 172.30.0.96/27
+      - 172.30.0.128/27
+      - 172.30.0.160/27
+      - 172.30.0.192/27
+      - 172.30.0.225/27
+    Default: 172.30.0.64/27
 
   InstancesImageId:
     Type: String
@@ -130,19 +130,19 @@ Resources:
   NetworkStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/cf-templates-hfix7v22gvfa-us-east-1/template-infra-mlm/network_stacks.yml"
+      TemplateURL: "https://s3.amazonaws.com/cf-templates-hfix7v22gvfa-us-east-1/template-infra-mlm2/network_stacks.yml"
       Parameters:
         PublicSubnetCdir: !Ref PublicSubnetCdir
-        LBSubnetCdir: !Ref LBSubnetCdir
+        LBSubnetCdir: !Ref LoadBSubnetCdir
         PrivateSubnetCdir: !Ref PrivateSubnetCdir
       Tags:
         - Key: Name
-          Value: '${NetworkStackName}'
+          Value: NetworkStack-mlm
 
   InstancesStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/cf-templates-hfix7v22gvfa-us-east-1/template-infra-mlm/instances_stacks.yml"
+      TemplateURL: "https://s3.amazonaws.com/cf-templates-hfix7v22gvfa-us-east-1/template-infra-mlm2/instances_stacks.yml"
       Parameters:
         InstancesImageId: !Ref InstancesImageId
         InstancesKeyName: !Ref InstancesKeyName
@@ -152,13 +152,13 @@ Resources:
         InstanceTypeBastion: !Ref InstanceTypeBastion
       Tags:
         - Key: Name
-          Value: '${InstancesStackName}'
+          Value: InstancesStack-mlm
 
     DependsOn: NetworkStack 
   LoadBalancerStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/cf-templates-hfix7v22gvfa-us-east-1/template-infra-mlm/loadBalancer_stacks.yml"
+      TemplateURL: "https://s3.amazonaws.com/cf-templates-hfix7v22gvfa-us-east-1/template-infra-mlm2/loadBalancer_stacks.yml"
       Parameters:
         UCPGPort: !Ref UCPGPort
         UCPGProtocol: !Ref UCPGProtocol
