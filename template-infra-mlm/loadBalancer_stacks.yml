@@ -1,19 +1,17 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: "Docker cluster LoadBalancer"
 Parameters:
-  NetworkStack:
+  NetworkStackName:
     Type: String
     MinLength: 1
     MaxLength: 255
-    AllowedPattern: '^[a-zA-Z][-a-zA-Z0-9]*$'
-    Default: NetworkStack
+    Default: network
   
-  InstancesStack:
+  InstancesStackName:
     Type: String
     MinLength: 1
     MaxLength: 255
-    AllowedPattern: '^[a-zA-Z][-a-zA-Z0-9]*$'
-    Default: InstancesStack
+    Default: instances
 
 Resources: 
   LoadBalancer:
@@ -24,13 +22,13 @@ Resources:
       Scheme: "internet-facing"
       SecurityGroups: 
           - !ImportValue 
-            'Fn::Sub': '${NetworkStack}-LBSecureGrpID'
+            'Fn::Sub': 'LBSecureGrpID'
       #SubnetMappings: [!Ref ---]
       Subnets: 
           - !ImportValue 
-            'Fn::Sub': '${NetworkStack}-PublicSubnetID'
+            'Fn::Sub': 'PublicSubnetID'
           - !ImportValue 
-            'Fn::Sub': '${NetworkStack}-PublicSubnetLBID'
+            'Fn::Sub': 'PublicSubnetLBID'
       Type: "application"
       Tags:
         -
@@ -48,20 +46,20 @@ Resources:
       Port: 443
       Protocol: "HTTP"
       VpcId: !ImportValue 
-        'Fn::Sub': '${NetworkStack}-VPCID'
+        'Fn::Sub': 'VPCID'
       TargetType: instance 
       Targets: 
         -
           Id: !ImportValue 
-            'Fn::Sub': '${InstancesStack}-Manager1ID'
+            'Fn::Sub': 'Manager1ID'
           Port: 443
         -
           Id: !ImportValue 
-            'Fn::Sub': '${InstancesStack}-Manager2ID'
+            'Fn::Sub': 'Manager2ID'
           Port: 443
         -
           Id: !ImportValue 
-            'Fn::Sub': '${InstancesStack}-Manager3ID'
+            'Fn::Sub': 'Manager3ID'
           Port: 443
       Tags:
         -
@@ -79,12 +77,12 @@ Resources:
       Port: 80
       Protocol: "HTTP"
       VpcId: !ImportValue 
-        'Fn::Sub': '${NetworkStack}-VPCID'
+        'Fn::Sub': 'VPCID'
       TargetType: instance 
       Targets: 
         -
           Id: !ImportValue 
-            'Fn::Sub': '${InstancesStack}-WorkerDTRID'
+            'Fn::Sub': 'WorkerDTRID'
           Port: 443
       Tags:
         -
@@ -102,28 +100,28 @@ Resources:
       Port: 8080
       Protocol: "HTTP"
       VpcId: !ImportValue 
-        'Fn::Sub': '${NetworkStack}-VPCID'
+        'Fn::Sub': 'VPCID'
       TargetType: instance 
       Targets: 
         -
           Id: !ImportValue 
-            'Fn::Sub': '${InstancesStack}-Manager1ID'
+            'Fn::Sub': 'Manager1ID'
           Port: 443
         -
           Id: !ImportValue 
-            'Fn::Sub': '${InstancesStack}-Manager2ID'
+            'Fn::Sub': 'Manager2ID'
           Port: 443
         -
           Id: !ImportValue 
-            'Fn::Sub': '${InstancesStack}-Manager3ID'
+            'Fn::Sub': 'Manager3ID'
           Port: 443
         -
           Id: !ImportValue 
-            'Fn::Sub': '${InstancesStack}-WorkerID'
+            'Fn::Sub': 'WorkerID'
           Port: 443
         -
           Id: !ImportValue 
-            'Fn::Sub': '${InstancesStack}-WorkerDTRID'
+            'Fn::Sub': 'WorkerDTRID'
           Port: 443
 
   ListenerUCP:

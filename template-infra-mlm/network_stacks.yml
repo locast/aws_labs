@@ -1,5 +1,12 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: "Network for Docker lab"
+Parameters:
+  VpcName:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    Default: VPC-mlm
+
 Resources: 
   VPC:
     Type: 'AWS::EC2::VPC'
@@ -239,25 +246,25 @@ Outputs:
     Description: VPC ID
     Value: !Ref VPC
     Export:
-      Name: !Sub '${AWS::StackName}-VPCID'
+      Name: !Sub 'VPCID'
 
   PublicSubnetID:
     Description: The subnet ID to use for public web servers
     Value: !Ref PublicSubnet
     Export:
-      Name: !Sub '${AWS::StackName}-PublicSubnetID'
+      Name: !Sub 'PublicSubnetID'
 
   PublicSubnetLBID:
     Description: The subnet ID to use for public web servers
     Value: !Ref PublicSubnetLB
     Export:
-      Name: !Sub '${AWS::StackName}-PublicSubnetLBID'
+      Name: !Sub 'PublicSubnetLBID'
 
   PrivateSubnetID:
     Description: The subnet ID to use for public web servers
     Value: !Ref PrivateSubnet
     Export:
-      Name: !Sub '${AWS::StackName}-PrivateSubnetID'
+      Name: !Sub 'PrivateSubnetID'
 
   pubSecurityGroupID:
     Description: The security group ID to use for public web servers
@@ -265,7 +272,7 @@ Outputs:
       - pubSecurityGroup
       - GroupId
     Export:
-      Name: !Sub '${AWS::StackName}-pubSecurityGroupID'
+      Name: !Sub 'pubSecurityGroupID'
   
   LBSecureGrpID:
     Description: The security group ID to use for public web servers
@@ -273,7 +280,7 @@ Outputs:
       - LBSecureGrp
       - GroupId
     Export:
-      Name: !Sub '${AWS::StackName}-LBSecureGrpID'
+      Name: !Sub 'LBSecureGrpID'
 
   privateSecGroupID:
     Description: The security group ID to use for public web servers
@@ -281,4 +288,4 @@ Outputs:
       - privateSecGroup
       - GroupId
     Export:
-      Name: !Sub '${AWS::StackName}-privateSecGroupID'
+      Name: !Sub 'privateSecGroupID'
