@@ -1,0 +1,182 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Docker cluster with Bastion"
+Parameters:
+  InstancesImageId:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    Default: ami-0a313d6098716f372
+    
+  InstancesKeyName:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    Default: devops_key
+  
+  BastionKeyName:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    Default: Bastion-mlm
+
+  InstanceTypeManager:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.medium
+      - t2.xlarge
+      - c5n.xlarge
+    Default: t2.medium
+  
+  InstanceTypeWorker:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.medium
+      - t2.xlarge
+      - c5n.xlarge
+    Default: t2.medium
+
+  InstanceTypeBastion:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.micro
+      - t2.nano
+    Default: t2.nano
+
+Resources: 
+  Manager1: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : !Ref InstanceTypeManager
+        ImageId: !Ref InstancesImageId
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Manager1"
+        SecurityGroupIds: 
+          - !ImportValue 
+            'Fn::Sub': 'privateSecGroupID-mlm'
+        KeyName: !Ref InstancesKeyName
+        SubnetId: !ImportValue
+          'Fn::Sub': 'PrivateSubnetID-mlm'
+    
+  Manager2: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : !Ref InstanceTypeManager
+        ImageId: !Ref InstancesImageId
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Manager2"
+        SecurityGroupIds: 
+          - !ImportValue 
+            'Fn::Sub': 'privateSecGroupID-mlm'
+        KeyName: !Ref InstancesKeyName
+        SubnetId: !ImportValue
+          'Fn::Sub': 'PrivateSubnetID-mlm'
+ 
+  Manager3: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : !Ref InstanceTypeManager
+        ImageId: !Ref InstancesImageId
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Manager3"
+        SecurityGroupIds: 
+          - !ImportValue 
+            'Fn::Sub': 'privateSecGroupID-mlm'
+        KeyName: !Ref InstancesKeyName
+        SubnetId: !ImportValue
+          'Fn::Sub': 'PrivateSubnetID-mlm'
+
+  Worker: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : !Ref InstanceTypeWorker
+        ImageId: !Ref InstancesImageId
+        Tags: 
+          -
+            Key: "Name"
+            Value: "worker"
+        SecurityGroupIds: 
+          - !ImportValue 
+            'Fn::Sub': 'privateSecGroupID-mlm'
+        KeyName: !Ref InstancesKeyName
+        SubnetId: !ImportValue
+          'Fn::Sub': 'PrivateSubnetID-mlm'
+
+  WorkerDTR: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : !Ref InstanceTypeWorker
+        ImageId: !Ref InstancesImageId
+        Tags:
+          -        
+            Key: "Name"
+            Value: "DTR"
+        SecurityGroupIds: 
+          - !ImportValue 
+            'Fn::Sub': 'privateSecGroupID-mlm'
+        KeyName: !Ref InstancesKeyName
+        SubnetId: !ImportValue
+          'Fn::Sub': 'PrivateSubnetID-mlm'
+
+  Bastion: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : !Ref InstanceTypeBastion
+        ImageId: !Ref InstancesImageId
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Bastion"
+        SecurityGroupIds: 
+          - !ImportValue 
+            'Fn::Sub': 'pubSecurityGroupID-mlm'
+        KeyName: !Ref BastionKeyName
+        SubnetId: !ImportValue
+          'Fn::Sub': 'PublicSubnetID-mlm'
+Outputs:
+  Manager1ID:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref Manager1
+    Export:
+      Name: !Sub 'Manager1ID-mlm'
+
+  Manager2ID:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref Manager2
+    Export:
+      Name: !Sub 'Manager2ID-mlm'
+
+  Manager3ID:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref Manager3
+    Export:
+      Name: !Sub 'Manager3ID-mlm'
+
+  WorkerID:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref Worker
+    Export:
+      Name: !Sub 'WorkerID-mlm'
+
+  WorkerDTRID:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref WorkerDTR
+    Export:
+      Name: !Sub 'WorkerDTRID-mlm'
+
+  BastionID:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref Bastion
+    Export:
+      Name: !Sub 'BastionID-mlm'

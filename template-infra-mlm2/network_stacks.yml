@@ -1,0 +1,330 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Network for Docker lab"
+Parameters:  
+  PublicSubnetCdir:
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+    AllowedValues: 
+      - 172.30.0.0/24
+      - 172.30.0.32/24
+      - 172.30.0.64/24
+      - 172.30.0.96/24
+      - 172.30.0.128/24
+      - 172.30.0.160/24
+      - 172.30.0.192/24
+      - 172.30.0.224/24
+    Default: 172.30.0.0/24
+
+  LBSubnetCdir:
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+    AllowedValues: 
+      - 172.30.0.0/24
+      - 172.30.0.32/24
+      - 172.30.0.64/24
+      - 172.30.0.96/24
+      - 172.30.0.128/24
+      - 172.30.0.160/24
+      - 172.30.0.192/24
+      - 172.30.0.224/24
+    Default: 172.30.0.32/24
+
+  PrivateSubnetCdir:
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+    AllowedValues: 
+      - 172.30.0.0/24
+      - 172.30.0.32/24
+      - 172.30.0.64/24
+      - 172.30.0.96/24
+      - 172.30.0.128/24
+      - 172.30.0.160/24
+      - 172.30.0.192/24
+      - 172.30.0.224/24
+    Default: 172.30.0.64/24
+
+Resources: 
+  VPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 172.30.0.0/24
+      Tags:
+        - Key: Name
+          Value: VPC-mlm
+
+  EIP:
+    Type: 'AWS::EC2::EIP'
+    DependsOn: PublicSubnet
+
+  PublicSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: us-east-1a
+      CidrBlock: !Ref PublicSubnetCdir
+      Tags:
+        - Key: Name
+          Value: PublicSubnet-mlm
+    DependsOn: VPC
+
+  PublicSubnetLB:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: us-east-1b
+      CidrBlock: !Ref LBSubnetCdir
+      Tags:
+        - Key: Name
+          Value: PublicSubnetLB-mlm
+    DependsOn: VPC
+
+  PrivateSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      #AvailabilityZone: us-east-1b
+      CidrBlock: !Ref PrivateSubnetCdir
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet-mlm
+
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: InternetGateway-mlm
+    DependsOn: VPC
+
+  NatGateway:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt 
+        - EIP
+        - AllocationId
+      SubnetId: !Ref PublicSubnet
+      Tags:
+        - Key: Name
+          Value: NatGateway-mlm
+    DependsOn: EIP
+
+  VPCGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+
+#  VPCGatewayAttachmentLB:
+#    Type: 'AWS::EC2::VPCGatewayAttachment'
+#    Properties:
+#      InternetGatewayId: !Ref InternetGatewayLB
+#      VpcId: !Ref VPC
+
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PublicRouteTable-mlm
+
+  PublicRouteTableLB:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PublicRouteTableLB-mlm
+
+  PrivateRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTable-mlm
+
+  PublicRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicRouteLB:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref PublicRouteTableLB
+
+  PrivateRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+      RouteTableId: !Ref PrivateRouteTable
+
+  PublicSubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet
+    DependsOn: PublicRouteTable
+
+  PublicSubnetRouteTableAssociationLB:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PublicRouteTableLB
+      SubnetId: !Ref PublicSubnetLB
+    DependsOn: PublicRouteTableLB
+
+  PrivateSubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet
+    DependsOn: PrivateRouteTable
+
+  pubSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: publicSecureGroup-mlm
+      GroupDescription: public security group rules
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: publicSecurityGrp-mlm
+
+  privateSecGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: PrivateSecureGroup-mlm
+      GroupDescription: private security group rules
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 12376
+          ToPort: 12388
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 10250
+          ToPort: 10250
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 9099
+          ToPort: 9099
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 7946
+          ToPort: 7946
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: udp
+          FromPort: 7946
+          ToPort: 7946
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 6443
+          ToPort: 6444
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: udp
+          FromPort: 4789
+          ToPort: 4789
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 2376
+          ToPort: 2377
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 179
+          ToPort: 179
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PrivateSecurityGrp-mlm
+
+  LBSecureGrp:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "LBSecureGroup-mlm"
+      GroupDescription: "loadbalancer security group rules"
+      SecurityGroupIngress:
+      - IpProtocol: "tcp"
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: "tcp"
+        FromPort: 443
+        ToPort: 443
+        CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPC
+      Tags: 
+        -
+          Key: "Name"
+          Value: "LBSecurityGrp-mlm"
+
+Outputs:
+
+  VPCID:
+    Description: VPC ID
+    Value: !Ref VPC
+    Export:
+      Name: !Sub 'VPC-mlm'
+
+  PublicSubnetID:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref PublicSubnet
+    Export:
+      Name: !Sub 'PublicSubnetID-mlm'
+
+  PublicSubnetLBID:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref PublicSubnetLB
+    Export:
+      Name: !Sub 'PublicSubnetLBID-mlm'
+
+  PrivateSubnetID:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref PrivateSubnet
+    Export:
+      Name: !Sub 'PrivateSubnetID-mlm'
+
+  pubSecurityGroupID:
+    Description: The security group ID to use for public web servers
+    Value: !GetAtt 
+      - pubSecurityGroup
+      - GroupId
+    Export:
+      Name: !Sub 'pubSecurityGroupID-mlm'
+  
+  LBSecureGrpID:
+    Description: The security group ID to use for public web servers
+    Value: !GetAtt 
+      - LBSecureGrp
+      - GroupId
+    Export:
+      Name: !Sub 'LBSecureGrpID-mlm'
+
+  privateSecGroupID:
+    Description: The security group ID to use for public web servers
+    Value: !GetAtt 
+      - privateSecGroup
+      - GroupId
+    Export:
+      Name: !Sub 'privateSecGroupID-mlm'
