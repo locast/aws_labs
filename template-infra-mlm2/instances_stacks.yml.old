@@ -115,19 +115,6 @@ Resources:
         KeyName: !Ref BastionKeyName
         SubnetId: !ImportValue
           'Fn::Sub': 'PublicSubnetID-mlm'
-
-  EIP Association:
-      Type: 'AWS::EC2::Association'
-      Properties: 
-        AllocationId: !Ref VPC
-        Tags:
-          - Key: Name
-            Value: EIPAssociation
-            
-  EIP:
-     Type: 'AWS::EC2::EIP'
-     DependsOn: PublicSubnet
-
 Outputs:
   Manager1ID:
     Description: The subnet ID to use for public web servers

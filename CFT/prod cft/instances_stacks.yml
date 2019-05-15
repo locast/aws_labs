@@ -1,0 +1,161 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "outils"
+Resources: 
+  
+   Manager1: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.medium"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Manager1"
+        SecurityGroupIds: [!Ref privateSecGroup]
+        KeyName: "devops_key"
+        SubnetId: 
+          Ref: PrivateSubnet
+    
+  Manager2: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.medium"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Manager2"
+        SecurityGroupIds: [!Ref privateSecGroup]
+        KeyName: "devops_key"
+        SubnetId: 
+          Ref: PrivateSubnet
+ 
+  Manager3: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.medium"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Manager3"
+        SecurityGroupIds: [!Ref privateSecGroup]
+        KeyName: "devops_key"
+        SubnetId: 
+          Ref: PrivateSubnet
+
+  Worker: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.medium"
+        ImageId: "ami-0a313d6098716f372"
+        Tags: 
+          -
+            Key: "Name"
+            Value: "Worker"
+        SecurityGroupIds: [!Ref privateSecGroup]
+        KeyName: "devops_key"
+        SubnetId: 
+          Ref: PrivateSubnet
+
+  DTR: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.nano"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "DTR"
+        SecurityGroupIds: [!Ref privateSecGroup]
+        KeyName: "devops_key"
+        SubnetId: 
+          Ref: PrivateSubnet
+
+  Bastion: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.nano"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Bastion"
+        SecurityGroupIds: [!Ref pubSecurityGroup]
+        KeyName: "Bastion-mlm"
+        SubnetId: 
+          Ref: PublicSubnet
+  
+  Ansible: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.medium"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Ansible"
+        SecurityGroupIds: [!Ref privateToolsSecGroup]
+        KeyName: "tools_key"
+        SubnetId: 
+          Ref: PrivateSubnetTools-mlm
+    
+  Jenkins: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.nano"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Jenkins"
+        SecurityGroupIds: [!Ref privateToolsSecGroup]
+        KeyName: "tools_key"
+        SubnetId: 
+          Ref: PrivateSubnetTools-mlm
+ 
+  Gitlab: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.nano"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Gitlab"
+        SecurityGroupIds: [!Ref privateToolsSecGroup]
+        KeyName: "tools_key"
+        SubnetId: 
+          Ref: PrivateSubnetTools-mlm
+
+  Database: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.medium"
+        ImageId: "ami-0a313d6098716f372"
+        Tags: 
+          -
+            Key: "Name"
+            Value: "Database"
+        SecurityGroupIds: [!Ref privateToolsSecGroup]
+        KeyName: "tools_key"
+        SubnetId: 
+          Ref: PrivateSubnetTools-mlm
+
+  Monitoring: 
+      Type: AWS::EC2::Instance
+      Properties:
+        InstanceType : "t2.nano"
+        ImageId: "ami-0a313d6098716f372"
+        Tags:
+          -        
+            Key: "Name"
+            Value: "Monitoring"
+        SecurityGroupIds: [!Ref privateToolsSecGroup]
+        KeyName: "tools_key"
+        SubnetId: 
+          Ref: PrivateSubnetTools-mlm
+
+  
+
+  
