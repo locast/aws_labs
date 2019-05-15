@@ -1,5 +1,0 @@
----
-# vars file for docker
-docker_ee_url: "https://storebits.docker.com/ee/m/sub-6a0f7901-41eb-4c24-bf1c-9f4de77ff82a"
-lsb_release: 'tt'
-docker_ee_version: 18.09

@@ -1,7 +1,0 @@
----
-# tasks file for update
-- name: "update system"
-  apt: 
-   update_cache: yes
-   upgrade: dist
-

@@ -1,0 +1,30 @@
+- name: Update + install packages
+  apt:
+    update_cache: yes
+    name: 
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+    state: present
+
+- name: Add official GPG key
+  shell: curl -fsSL {{docker_ee_url}}/ubuntu/gpg | sudo apt-key add -
+
+- name: Set stable repository
+  shell: sudo add-apt-repository "deb [arch=$(dpkg --print-architecture)] {{docker_ee_url}}/ubuntu $(lsb_release -cs) stable-{{docker_ee_version}}"
+
+- name: Install Docker EE version {{docker_ee_version}}
+  apt: 
+    update_cache: yes
+    name: 
+      - docker-ee
+      - docker-ee-cli
+      - containerd.io
+    state: present
+
+- name: Start Docker on boot
+  shell: sudo systemctl enable docker
+
+- name: Add user to Docker group
+  shell: sudo usermod -aG docker {{docker_user}}

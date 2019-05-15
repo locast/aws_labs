@@ -1,6 +1,0 @@
-- name: "install docker"
-  - hosts: allme: 
-    roles:
-     - role: update
-     - role: docker
-#     - role: swarm 
