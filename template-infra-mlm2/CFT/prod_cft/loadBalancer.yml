@@ -28,18 +28,18 @@ Resources:
       Scheme: "internet-facing"
       SecurityGroups: 
           - !ImportValue 
-            'Fn::Sub': 'LBSecureGrpID-mlm'
+            'Fn::Sub': 'LoadBalancerSecurityGroupIDProd-mlm'
       #SubnetMappings: [!Ref ---]
       Subnets: 
           - !ImportValue 
-            'Fn::Sub': 'PublicSubnetID-mlm'
+            'Fn::Sub': 'PublicSubnetIDProd-mlm'
           - !ImportValue 
-            'Fn::Sub': 'PublicSubnetLBID-mlm'
+            'Fn::Sub': 'LoadBalancerSubnetIDProd-mlm'
       Type: "application"
       Tags:
         -
           Key: "name"
-          Value: "LoadBalancer-mlm"
+          Value: "LoadBalancerProd-mlm"
 
   UCPGrp:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -52,7 +52,7 @@ Resources:
       Port: !Ref UCPGPort
       Protocol: !Ref UCPGProtocol
       VpcId: !ImportValue 
-        'Fn::Sub': 'VPC-mlm'
+        'Fn::Sub': 'VPCProd-mlm'
       TargetType: instance 
       Targets: 
         -
@@ -83,7 +83,7 @@ Resources:
       Port: !Ref DTRGPort
       Protocol: !Ref DTRProtocol
       VpcId: !ImportValue 
-        'Fn::Sub': 'VPC-mlm'
+        'Fn::Sub': 'VPCProd-mlm'
       TargetType: instance 
       Targets: 
         -
@@ -106,7 +106,7 @@ Resources:
       Port: !Ref AppPort
       Protocol: !Ref AppProtocol
       VpcId: !ImportValue 
-        'Fn::Sub': 'VPC-mlm'
+        'Fn::Sub': 'VPCProd-mlm'
       TargetType: instance 
       Targets: 
         -
@@ -136,7 +136,7 @@ Resources:
       DefaultActions:
       - Type: "forward"
         TargetGroupArn: !Ref UCPGrp
-      LoadBalancerArn: !Ref LoadBalancer
+      LoadBalancerArn: !Ref LoadBalancerProd
       Port: !Ref UCPGPort
       Protocol : !Ref UCPGProtocol
 
@@ -146,7 +146,7 @@ Resources:
       DefaultActions:
       - Type: "forward"
         TargetGroupArn: !Ref DTRGrp
-      LoadBalancerArn: !Ref LoadBalancer
+      LoadBalancerArn: !Ref LoadBalancerProd
       Port: !Ref DTRGPort
       Protocol : !Ref DTRProtocol
 
@@ -156,6 +156,6 @@ Resources:
       DefaultActions:
       - Type: "forward"
         TargetGroupArn: !Ref AppGrp
-      LoadBalancerArn: !Ref LoadBalancer
+      LoadBalancerArn: !Ref LoadBalancerProd
       Port: !Ref AppPort
       Protocol : !Ref AppProtocol
