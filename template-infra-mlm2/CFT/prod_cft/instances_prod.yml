@@ -32,10 +32,10 @@ Parameters:
             Value: "Manager1"
         SecurityGroupIds: 
           - !ImportValue 
-            'Fn::Sub': 'privateSecGroupID-mlm'
+            'Fn::Sub': 'PrivateSecurityGroupIDProd-mlm'
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
-          'Fn::Sub': 'PrivateSubnetID-mlm'
+          'Fn::Sub': 'PrivateSubnetIDProd-mlm'
         UserData:
         Fn::Base64: !Sub |
           apt install python
@@ -51,10 +51,10 @@ Parameters:
             Value: "Manager2"
         SecurityGroupIds: 
           - !ImportValue 
-            'Fn::Sub': 'privateSecGroupID-mlm'
+            'Fn::Sub': 'PrivateSecurityGroupIDProd-mlm'
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
-          'Fn::Sub': 'PrivateSubnetID-mlm'
+          'Fn::Sub': 'PrivateSubnetIDProd-mlm'
         UserData:
         Fn::Base64: !Sub |
           apt install python
@@ -70,10 +70,10 @@ Parameters:
             Value: "Manager3"
         SecurityGroupIds: 
           - !ImportValue 
-            'Fn::Sub': 'privateSecGroupID-mlm'
+            'Fn::Sub': 'PrivateSecurityGroupIDProd-mlm'
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
-          'Fn::Sub': 'PrivateSubnetID-mlm'
+          'Fn::Sub': 'PrivateSubnetIDProd-mlm'
         UserData:
         Fn::Base64: !Sub |
           apt install python
@@ -89,10 +89,10 @@ Parameters:
             Value: "worker"
         SecurityGroupIds: 
           - !ImportValue 
-            'Fn::Sub': 'privateSecGroupID-mlm'
+            'Fn::Sub': 'PrivateSecurityGroupIDProd-mlm'
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
-          'Fn::Sub': 'PrivateSubnetID-mlm'
+          'Fn::Sub': 'PrivateSubnetIDProd-mlm'
         UserData:
         Fn::Base64: !Sub |
           apt install python
@@ -108,10 +108,10 @@ Parameters:
             Value: "DTR"
         SecurityGroupIds: 
           - !ImportValue 
-            'Fn::Sub': 'privateSecGroupID-mlm'
+            'Fn::Sub': 'PrivateSecurityGroupIDProd-mlm'
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
-          'Fn::Sub': 'PrivateSubnetID-mlm'
+          'Fn::Sub': 'PrivateSubnetIDProd-mlm'
         UserData:
         Fn::Base64: !Sub |
           apt install python
