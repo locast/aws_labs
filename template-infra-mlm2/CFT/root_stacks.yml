@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Docker cluster root stack
 Parameters:
-  PublicSubnetCdir:
+  PublicSubnetProdCidr:
     Type: String
     MinLength: 8
     MaxLength: 19
@@ -16,7 +16,7 @@ Parameters:
       - 172.30.0.225/27
     Default: 172.30.0.0/27
 
-  LoadBSubnetCdir:
+  LoadBalancerSubnetProdCidr:
     Type: String
     MinLength: 8
     MaxLength: 19
@@ -31,7 +31,7 @@ Parameters:
       - 172.30.0.225/27
     Default: 172.30.0.32/27
 
-  PrivateSubnetCdir:
+  PrivateSubnetProdCidr:
     Type: String
     MinLength: 8
     MaxLength: 19
@@ -132,9 +132,9 @@ Resources:
     Properties:
       TemplateURL: "https://s3.amazonaws.com/cf-templates-hfix7v22gvfa-us-east-1/template-infra-mlm2/network_stacks.yml"
       Parameters:
-        PublicSubnetCdir: !Ref PublicSubnetCdir
-        LBSubnetCdir: !Ref LoadBSubnetCdir
-        PrivateSubnetCdir: !Ref PrivateSubnetCdir
+        PublicSubnetCdir: !Ref PublicSubnetProdCidr
+        LBSubnetCdir: !Ref LoadBalancerSubnetProdCidr
+        PrivateSubnetCdir: !Ref PrivateSubnetProdCidr
       Tags:
         - Key: Name
           Value: NetworkStack-mlm
@@ -168,5 +168,5 @@ Resources:
         AppProtocol: !Ref AppProtocol
       Tags:
         - Key: Name
-          Value: LoadBalancer-mlm
+          Value: LoadBalancerProd-mlm
     DependsOn: InstancesStack 
