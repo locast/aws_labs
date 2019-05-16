@@ -1,178 +1,175 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: "Network for Docker lab"
+
+Description: "Production network"
+
 Parameters:  
-  PublicSubnetCdir:
+  PUBLIC-SUBNET-PRODCdir:
     Type: String
 
-  LBSubnetCdir:
+  LB-SUBNET-PRODCdir:
     Type: String
 
-  PrivateSubnetCdir: 
+  PRIVATE-SUBNET-PRODCdir: 
     Type: String
 
 Resources: 
-  VPC:
+
+  VPC-PROD:
     Type: 'AWS::EC2::VPC'
     Properties:
       CidrBlock: 172.30.0.0/24
       Tags:
         - Key: Name
-          Value: VPC-mlm
+          Value: VPC-PROD-mlm
 
-  EIP:
+  EIP-PROD:
     Type: 'AWS::EC2::EIP'
-    DependsOn: PublicSubnet
+    DependsOn: PUBLIC-SUBNET-PROD
 
-  PublicSubnet:
+  PUBLIC-SUBNET-PROD:
     Type: 'AWS::EC2::Subnet'
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref VPC-PROD
       AvailabilityZone: us-east-1a
-      CidrBlock: !Ref PublicSubnetCdir
+      CidrBlock: !Ref PUBLIC-SUBNET-PRODCdir
       Tags:
         - Key: Name
-          Value: PublicSubnet-mlm
-    DependsOn: VPC
+          Value: PUBLIC-SUBNET-PROD-mlm
+    DependsOn: VPC-PROD
 
-  PublicSubnetLB:
+  LB-SUBNET-PROD:
     Type: 'AWS::EC2::Subnet'
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref VPC-PROD
       AvailabilityZone: us-east-1b
-      CidrBlock: !Ref LBSubnetCdir
+      CidrBlock: !Ref LB-SUBNET-PRODCdir
       Tags:
         - Key: Name
-          Value: PublicSubnetLB-mlm
-    DependsOn: VPC
+          Value: LB-SUBNET-PROD-mlm
+    DependsOn: VPC-PROD
 
-  PrivateSubnet:
+  PRIVATE-SUBNET-PROD:
     Type: 'AWS::EC2::Subnet'
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref VPC-PROD
       #AvailabilityZone: us-east-1b
-      CidrBlock: !Ref PrivateSubnetCdir
+      CidrBlock: !Ref PRIVATE-SUBNET-PRODCdir
       Tags:
         - Key: Name
-          Value: PrivateSubnet-mlm
+          Value: PRIVATE-SUBNET-PROD-mlm
 
-  InternetGateway:
+  IGW-PROD:
     Type: 'AWS::EC2::InternetGateway'
     Properties:
       Tags:
         - Key: Name
-          Value: InternetGateway-mlm
-    DependsOn: VPC
+          Value: IGW-PROD-mlm
+    DependsOn: VPC-PROD
 
-  NatGateway:
+  NATGW-PROD:
     Type: 'AWS::EC2::NatGateway'
     Properties:
       AllocationId: !GetAtt 
-        - EIP
+        - EIP-PROD
         - AllocationId
-      SubnetId: !Ref PublicSubnet
+      SubnetId: !Ref PUBLIC-SUBNET-PROD
       Tags:
         - Key: Name
-          Value: NatGateway-mlm
-    DependsOn: EIP
+          Value: NATGW-PROD-mlm
+    DependsOn: EIP-PROD
 
-  VPCGatewayAttachment:
+  VPC-GWATTACHMENT-PROD:
     Type: 'AWS::EC2::VPCGatewayAttachment'
     Properties:
-      InternetGatewayId: !Ref InternetGateway
-      VpcId: !Ref VPC
+      InternetGatewayId: !Ref IGW-PROD
+      VpcId: !Ref VPC-PROD
 
-#  VPCGatewayAttachmentLB:
-#    Type: 'AWS::EC2::VPCGatewayAttachment'
-#    Properties:
-#      InternetGatewayId: !Ref InternetGatewayLB
-#      VpcId: !Ref VPC
-
-  PublicRouteTable:
+  PUBLIC-RT-PROD:
     Type: 'AWS::EC2::RouteTable'
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref VPC-PROD
       Tags:
         - Key: Name
-          Value: PublicRouteTable-mlm
+          Value: PUBLIC-RT-PROD-mlm
 
-  PublicRouteTableLB:
+  LB-RT-PROD:
     Type: 'AWS::EC2::RouteTable'
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref VPC-PROD
       Tags:
         - Key: Name
-          Value: PublicRouteTableLB-mlm
+          Value: LB-RT-PROD-mlm
 
-  PrivateRouteTable:
+  PRIVATE-RT-PROD:
     Type: 'AWS::EC2::RouteTable'
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref VPC-PROD
       Tags:
         - Key: Name
-          Value: PrivateRouteTable-mlm
+          Value: PRIVATE-RT-PROD-mlm
 
-  PublicRoute:
+  PUBLIC-ROUTE-PROD:
     Type: 'AWS::EC2::Route'
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGateway
-      RouteTableId: !Ref PublicRouteTable
+      GatewayId: !Ref IGW-PROD
+      RouteTableId: !Ref PUBLIC-RT-PROD
 
-  PublicRouteLB:
+  LB-ROUTE-PROD:
     Type: 'AWS::EC2::Route'
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGateway
-      RouteTableId: !Ref PublicRouteTableLB
+      GatewayId: !Ref IGW-PROD
+      RouteTableId: !Ref LB-RT-PROD
 
-  PrivateRoute:
+  PRIVATE-ROUTE-PROD:
     Type: 'AWS::EC2::Route'
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway
-      RouteTableId: !Ref PrivateRouteTable
+      NatGatewayId: !Ref NATGW-PROD
+      RouteTableId: !Ref PRIVATE-RT-PROD
 
-  PublicSubnetRouteTableAssociation:
+  PUBLIC-SUBNET-RTASSOCIATION-PROD:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet
-    DependsOn: PublicRouteTable
+      RouteTableId: !Ref PUBLIC-RT-PROD
+      SubnetId: !Ref PUBLIC-SUBNET-PROD
+    DependsOn: PUBLIC-RT-PROD
 
-  PublicSubnetRouteTableAssociationLB:
+  LB-SUBNET-RTASSOCIATION-PROD:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
-      RouteTableId: !Ref PublicRouteTableLB
-      SubnetId: !Ref PublicSubnetLB
-    DependsOn: PublicRouteTableLB
+      RouteTableId: !Ref LB-RT-PROD
+      SubnetId: !Ref LB-SUBNET-PROD
+    DependsOn: LB-RT-PROD
 
-  PrivateSubnetRouteTableAssociation:
+  PRIVATE-SUBNET-RTASSOCIATION-PROD:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      SubnetId: !Ref PrivateSubnet
-    DependsOn: PrivateRouteTable
+      RouteTableId: !Ref PRIVATE-RT-PROD
+      SubnetId: !Ref PRIVATE-SUBNET-PROD
+    DependsOn: PRIVATE-RT-PROD
 
-  pubSecurityGroup:
+  PUBLIC-SG-PROD:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupName: publicSecureGroup-mlm
-      GroupDescription: public security group rules
+      GroupName: PUBLIC-SG-PROD-mlm
+      GroupDescription: PUBLIC SG rules for prod
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VPC
+      VpcId: !Ref VPC-PROD
       Tags:
         - Key: Name
-          Value: publicSecurityGrp-mlm
+          Value: PUBLIC-SG-PROD-mlm
 
-  privateSecGroup:
+  PRIVATE-SG-PROD:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupName: PrivateSecureGroup-mlm
-      GroupDescription: private security group rules
+      GroupName: PRIVATE-SG-PROD-mlm
+      GroupDescription: PRIVATE SG rules for prod
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 12376
@@ -222,16 +219,16 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VPC
+      VpcId: !Ref VPC-PROD
       Tags:
         - Key: Name
-          Value: PrivateSecurityGrp-mlm
+          Value: PRIVATE-SG-PROD-mlm
 
-  LBSecureGrp:
+  LB-SG-PROD:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: "LBSecureGroup-mlm"
-      GroupDescription: "loadbalancer security group rules"
+      GroupName: LB-SG-PROD-mlm
+      GroupDescription: LB SG rules for prod
       SecurityGroupIngress:
       - IpProtocol: "tcp"
         FromPort: 80
@@ -241,58 +238,58 @@ Resources:
         FromPort: 443
         ToPort: 443
         CidrIp: 0.0.0.0/0
-      VpcId: !Ref VPC
+      VpcId: !Ref VPC-PROD
       Tags: 
         -
-          Key: "Name"
-          Value: "LBSecurityGrp-mlm"
+          Key: Name
+          Value: LB-SG-PROD-mlm
 
 Outputs:
 
-  VPCID:
-    Description: VPC ID
-    Value: !Ref VPC
+  VPC-ID-PROD:
+    Description: VPC ID for prod
+    Value: !Ref VPC-PROD
     Export:
-      Name: !Sub 'VPC-mlm'
+      Name: !Sub VPC-ID-PROD-mlm
 
-  PublicSubnetID:
-    Description: The subnet ID to use for public web servers
-    Value: !Ref PublicSubnet
+  PUBLIC-SUBNET-ID-PROD:
+    Description: PUBLIC SUBNET ID for public web servers
+    Value: !Ref PUBLIC-SUBNET-PROD
     Export:
-      Name: !Sub 'PublicSubnetID-mlm'
+      Name: !Sub PUBLIC-SUBNET-ID-PROD-mlm
 
-  PublicSubnetLBID:
-    Description: The subnet ID to use for public web servers
-    Value: !Ref PublicSubnetLB
+  LB-ID-PROD:
+    Description: LB SUBNET ID for public web servers
+    Value: !Ref LB-SUBNET-PROD
     Export:
-      Name: !Sub 'PublicSubnetLBID-mlm'
+      Name: !Sub LB-ID-PROD-mlm
 
-  PrivateSubnetID:
-    Description: The subnet ID to use for public web servers
-    Value: !Ref PrivateSubnet
+  PRIVATE-SUBNET-ID-PROD:
+    Description: PRIVATE SUBNET ID for public web servers
+    Value: !Ref PRIVATE-SUBNET-PROD
     Export:
-      Name: !Sub 'PrivateSubnetID-mlm'
+      Name: !Sub PRIVATE-SUBNET-ID-PROD-mlm
 
-  pubSecurityGroupID:
-    Description: The security group ID to use for public web servers
+  PUBLIC-SG-ID-PROD:
+    Description: PUBLIC SG ID for public web servers
     Value: !GetAtt 
-      - pubSecurityGroup
+      - PUBLIC-SG-PROD
       - GroupId
     Export:
-      Name: !Sub 'pubSecurityGroupID-mlm'
+      Name: !Sub PUBLIC-SG-ID-PROD-mlm
   
-  LBSecureGrpID:
-    Description: The security group ID to use for public web servers
+  LB-SG-ID-PROD:
+    Description: LB SG ID for public web servers
     Value: !GetAtt 
-      - LBSecureGrp
+      - LB-SG-PROD
       - GroupId
     Export:
-      Name: !Sub 'LBSecureGrpID-mlm'
+      Name: !Sub LB-SG-ID-PROD-mlm
 
-  privateSecGroupID:
-    Description: The security group ID to use for public web servers
+  PRIVATE-SG-ID-PROD:
+    Description: PRIVATE SG ID for public web servers
     Value: !GetAtt 
-      - privateSecGroup
+      - PRIVATE-SG-PROD
       - GroupId
     Export:
-      Name: !Sub 'privateSecGroupID-mlm'
+      Name: !Sub PRIVATE-SG-ID-PROD-mlm
