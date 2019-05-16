@@ -19,7 +19,8 @@ Parameters:
   InstanceTypeBastion:
     Type: String
 
-Resources: 
+  
+  Resources: 
   Manager1: 
       Type: AWS::EC2::Instance
       Properties:
@@ -35,6 +36,9 @@ Resources:
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
           'Fn::Sub': 'PrivateSubnetID-mlm'
+        UserData:
+        Fn::Base64: !Sub |
+          apt install python
     
   Manager2: 
       Type: AWS::EC2::Instance
@@ -51,6 +55,9 @@ Resources:
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
           'Fn::Sub': 'PrivateSubnetID-mlm'
+        UserData:
+        Fn::Base64: !Sub |
+          apt install python
  
   Manager3: 
       Type: AWS::EC2::Instance
@@ -67,6 +74,9 @@ Resources:
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
           'Fn::Sub': 'PrivateSubnetID-mlm'
+        UserData:
+        Fn::Base64: !Sub |
+          apt install python
 
   Worker: 
       Type: AWS::EC2::Instance
@@ -83,6 +93,9 @@ Resources:
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
           'Fn::Sub': 'PrivateSubnetID-mlm'
+        UserData:
+        Fn::Base64: !Sub |
+          apt install python
 
   WorkerDTR: 
       Type: AWS::EC2::Instance
@@ -99,34 +112,10 @@ Resources:
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
           'Fn::Sub': 'PrivateSubnetID-mlm'
+        UserData:
+        Fn::Base64: !Sub |
+          apt install python
 
-  Bastion: 
-      Type: AWS::EC2::Instance
-      Properties:
-        InstanceType : !Ref InstanceTypeBastion
-        ImageId: !Ref InstancesImageId
-        Tags:
-          -        
-            Key: "Name"
-            Value: "Bastion"
-        SecurityGroupIds: 
-          - !ImportValue 
-            'Fn::Sub': 'pubSecurityGroupID-mlm'
-        KeyName: !Ref BastionKeyName
-        SubnetId: !ImportValue
-          'Fn::Sub': 'PublicSubnetID-mlm'
-
-  EIP Association:
-      Type: 'AWS::EC2::Association'
-      Properties: 
-        AllocationId: !Ref VPC
-        Tags:
-          - Key: Name
-            Value: EIPAssociation
-            
-  EIP:
-     Type: 'AWS::EC2::EIP'
-     DependsOn: PublicSubnet
 
 Outputs:
   Manager1ID:
