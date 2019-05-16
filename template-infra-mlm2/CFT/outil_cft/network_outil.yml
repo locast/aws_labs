@@ -150,20 +150,20 @@ Resources:
       SubnetId: !Ref PrivateSubnetTools
     DependsOn: PrivateRouteTableTools
 
-  PublicSecurityGroupProd:
+  PublicSecurityGroupTools:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupName: PublicSecurityGroupProd-mlm
+      GroupName: PublicSecurityGroupTools-mlm
       GroupDescription: public security group rules
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VPCProd
+      VpcId: !Ref VPCTools
       Tags:
         - Key: Name
-          Value: PublicSecurityGroupProd-mlm
+          Value: PublicSecurityGroupTools-mlm
 
   PrivateSecurityGroupTools:
     Type: 'AWS::EC2::SecurityGroup'
@@ -202,50 +202,50 @@ Resources:
 
 Outputs:
 
-  VPCIDProd:
-    Description: VPCIDProd
-    Value: !Ref VPCProd
+  VPCIDTools:
+    Description: VPCIDTools
+    Value: !Ref VPCTools
     Export:
-      Name: !Sub VPCIDProd-mlm
+      Name: !Sub VPCIDTools-mlm
 
-  PublicSubnetIDProd:
+  PublicSubnetIDTools:
     Description: The subnet ID to use for public web servers
-    Value: !Ref PublicSubnetProd
+    Value: !Ref PublicSubnetTools
     Export:
-      Name: !Sub PublicSubnetIDProd-mlm
+      Name: !Sub PublicSubnetIDTools-mlm
 
-  LoadBalancerSubnetIDProd:
+  LoadBalancerSubnetIDTools:
     Description: The subnet ID to use for public web servers
-    Value: !Ref LoadBalancerSubnetProd
+    Value: !Ref LoadBalancerSubnetTools
     Export:
-      Name: !Sub LoadBalancerSubnetIDProd-mlm
+      Name: !Sub LoadBalancerSubnetIDTools-mlm
 
-  PrivateSubnetIDProd:
+  PrivateSubnetIDTools:
     Description: The subnet ID to use for public web servers
-    Value: !Ref PrivateSubnetProd
+    Value: !Ref PrivateSubnetTools
     Export:
-      Name: !Sub PrivateSubnetIDProd-mlm
+      Name: !Sub PrivateSubnetIDTools-mlm
 
-  PublicSecurityGroupIDProd:
+  PublicSecurityGroupIDTools:
     Description: The security group ID to use for public web servers
     Value: !GetAtt 
-      - PublicSecurityGroupProd
+      - PublicSecurityGroupTools
       - GroupId
     Export:
-      Name: !Sub PublicSecurityGroupIDProd-mlm
+      Name: !Sub PublicSecurityGroupIDTools-mlm
   
-  LoadBalancerSecurityGroupIDProd:
+  LoadBalancerSecurityGroupIDTools:
     Description: The security group ID to use for public web servers
     Value: !GetAtt 
-      - LoadBalancerSecurityGroupProd
+      - LoadBalancerSecurityGroupTools
       - GroupId
     Export:
-      Name: !Sub LoadBalancerSecurityGroupIDProd-mlm
+      Name: !Sub LoadBalancerSecurityGroupIDTools-mlm
 
-  PrivateSecurityGroupIDProd:
+  PrivateSecurityGroupIDTools:
     Description: The security group ID to use for public web servers
     Value: !GetAtt 
-      - PrivateSecurityGroupProd
+      - PrivateSecurityGroupTools
       - GroupId
     Export:
-      Name: !Sub PrivateSecurityGroupIDProd-mlm
+      Name: !Sub PrivateSecurityGroupIDTools-mlm
