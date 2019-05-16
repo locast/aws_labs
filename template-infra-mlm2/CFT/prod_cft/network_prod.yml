@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '20100909'
+AWSTemplateFormatVersion: '2010-09-09'
 
 Description: Production network
 
