@@ -1,90 +1,251 @@
 AWSTemplateFormatVersion: 2010-09-09
+
 Description: "Network for CICD tools"
+
 Parameters:  
-  PrivateSubnetToolsCdir:
+
+  PublicSubnetToolsCidr:
+    Type: String
+
+  LoadBalancerSubnetToolsCidr:
+    Type: String
+
+  PrivateSubnetToolsCidr: 
     Type: String
 
 Resources: 
+
+  VPCTools:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 172.30.1.0/24
+      Tags:
+        - Key: Name
+          Value: VPCTools-mlm
+
+  EIPTools:
+    Type: 'AWS::EC2::EIP'
+    DependsOn: PublicSubnetTools
+
+  PublicSubnetTools:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPCTools
+      AvailabilityZone: us-east-1a
+      CidrBlock: !Ref PublicSubnetToolsCidr
+      Tags:
+        - Key: Name
+          Value: PublicSubnetTools-mlm
+    DependsOn: VPCTools
+
+  LoadBalancerSubnetTools:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPCTools
+      AvailabilityZone: us-east-1b
+      CidrBlock: !Ref LoadBalancerSubnetToolsCidr
+      Tags:
+        - Key: Name
+          Value: LoadBalancerSubnetTools-mlm
+    DependsOn: VPCTools
+
   PrivateSubnetTools:
     Type: 'AWS::EC2::Subnet'
     Properties:
-      VpcId: !Ref VPC
-      CidrBlock: !Ref PrivateSubnetToolsCdir
+      VpcId: !Ref VPCTools
+      CidrBlock: !Ref PrivateSubnetToolsCidr
       Tags:
         - Key: Name
           Value: PrivateSubnetTools-mlm
 
-  PrivateToolsRouteTable:
-    Type: 'AWS::EC2::RouteTable'
+  InternetGatewayTools:
+    Type: 'AWS::EC2::InternetGateway'
     Properties:
-      VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: PrivateToolsRouteTable-mlm
+          Value: InternetGatewayTools-mlm
+    DependsOn: VPCTools
 
-  PrivateToolsRoute:
+  NatGatewayTools:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt 
+        - EIPTools
+        - AllocationId
+      SubnetId: !Ref PublicSubnetTools
+      Tags:
+        - Key: Name
+          Value: NatGatewayTools-mlm
+    DependsOn: EIPTools
+
+  VPCGatewayAttachmentTools:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      InternetGatewayId: !Ref InternetGatewayTools
+      VpcId: !Ref VPCTool
+
+  PublicRouteTableTools:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPCTools
+      Tags:
+        - Key: Name
+          Value: PublicRouteTableTools-mlm
+
+  LoadBalancerRouteTableTools:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPCTools
+      Tags:
+        - Key: Name
+          Value: LoadBalancerRouteTableTools-mlm
+
+  PrivateRouteTableTools:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPCTools
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTableTools-mlm
+
+  PublicRouteTools:
     Type: 'AWS::EC2::Route'
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway
-      RouteTableId: !Ref PrivateToolsRouteTable
+      GatewayId: !Ref InternetGatewayTools
+      RouteTableId: !Ref PublicRouteTableTools
 
-  PrivateSubnetToolsRouteTableAssociation:
+  LoadBalancerRouteTools:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGatewayTools
+      RouteTableId: !Ref LoadBalancerRouteTableTools
+
+  PrivateRouteTools:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGatewayTools
+      RouteTableId: !Ref PrivateRouteTableTools
+
+  PublicSubnetRouteTableAssociationTools:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
-      RouteTableId: !Ref PrivateToolsRouteTable
+      RouteTableId: !Ref PublicRouteTableTools
+      SubnetId: !Ref PublicSubnetTools
+    DependsOn: PublicRouteTableTools
+
+  LoadBalancerSubnetRouteTableAssociationTools:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref LoadBalancerRouteTableTools
+      SubnetId: !Ref LoadBalancerSubnetTools
+    DependsOn: LoadBalancerRouteTableTools
+
+  PrivateSubnetRouteTableAssociationTools:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableTools
       SubnetId: !Ref PrivateSubnetTools
-    DependsOn: PrivateToolsRouteTable
+    DependsOn: PrivateRouteTableTools
 
-  PrivateTools2PrivateRouteTable:
-    Type: 'AWS::EC2::RouteTable'
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: PrivateTools2PrivateRouteTable-mlm
-
-  PrivateTools2PrivateRoute:
-    Type: 'AWS::EC2::Route'
-    Properties:
-      DestinationCidrBlock: 0.0.0.0/0
-      SubnetId: !Ref PrivateSubnet
-      RouteTableId: !Ref PrivateTools2PrivateRouteTable
-
-  PrivateSubnetTools2PrivateRouteTableAssociation:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      RouteTableId: !Ref PrivateTools2PrivateRouteTable
-      SubnetId: !Ref PrivateSubnet
-    DependsOn: PrivateTools2PrivateRouteTable
-
-  privateToolsSecGroup:
+  PublicSecurityGroupProd:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupName: PrivateToolsSecureGroup-mlm
+      GroupName: PublicSecurityGroupProd-mlm
+      GroupDescription: public security group rules
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPCProd
+      Tags:
+        - Key: Name
+          Value: PublicSecurityGroupProd-mlm
+
+  PrivateSecurityGroupTools:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: PrivateSecurityGroupTools-mlm
       GroupDescription: private security group rules for tools
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           CidrIp: 172.30.0.0/24
-      VpcId: !Ref VPC
+      VpcId: !Ref VPCTools
       Tags:
         - Key: Name
-          Value: PrivateToolsSecurityGrp-mlm
+          Value: PrivateSecurityGroupTools-mlm
+
+  LoadBalancerSecurityGroupTools:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: LoadBalancerSecurityGroupTools-mlm
+      GroupDescription: loadbalancer security group rules
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPCTools
+      Tags: 
+        -
+          Key: Name
+          Value: LoadBalancerSecurityGroupTools-mlm
 
 Outputs:
 
-  PrivateSubnetToolsID:
-    Description: The subnet ID to use for tools
-    Value: !Ref PrivateSubnetTools
+  VPCIDProd:
+    Description: VPCIDProd
+    Value: !Ref VPCProd
     Export:
-      Name: !Sub 'PrivateSubnetToolsID-mlm'
+      Name: !Sub VPCIDProd-mlm
 
-  privateToolsSecGroupID:
-    Description: The security group ID to use for tools
+  PublicSubnetIDProd:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref PublicSubnetProd
+    Export:
+      Name: !Sub PublicSubnetIDProd-mlm
+
+  LoadBalancerSubnetIDProd:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref LoadBalancerSubnetProd
+    Export:
+      Name: !Sub LoadBalancerSubnetIDProd-mlm
+
+  PrivateSubnetIDProd:
+    Description: The subnet ID to use for public web servers
+    Value: !Ref PrivateSubnetProd
+    Export:
+      Name: !Sub PrivateSubnetIDProd-mlm
+
+  PublicSecurityGroupIDProd:
+    Description: The security group ID to use for public web servers
     Value: !GetAtt 
-      - privateToolsSecGroup
+      - PublicSecurityGroupProd
       - GroupId
     Export:
-      Name: !Sub 'privateToolsSecGroupID-mlm'
+      Name: !Sub PublicSecurityGroupIDProd-mlm
+  
+  LoadBalancerSecurityGroupIDProd:
+    Description: The security group ID to use for public web servers
+    Value: !GetAtt 
+      - LoadBalancerSecurityGroupProd
+      - GroupId
+    Export:
+      Name: !Sub LoadBalancerSecurityGroupIDProd-mlm
+
+  PrivateSecurityGroupIDProd:
+    Description: The security group ID to use for public web servers
+    Value: !GetAtt 
+      - PrivateSecurityGroupProd
+      - GroupId
+    Export:
+      Name: !Sub PrivateSecurityGroupIDProd-mlm
