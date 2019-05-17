@@ -82,7 +82,7 @@ Resources:
     Type: 'AWS::EC2::VPCGatewayAttachment'
     Properties:
       InternetGatewayId: !Ref InternetGatewayTools
-      VpcId: !Ref VPCTool
+      VpcId: !Ref VPCTools
 
   PublicRouteTableTools:
     Type: 'AWS::EC2::RouteTable'
