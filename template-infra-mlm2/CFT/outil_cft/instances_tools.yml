@@ -34,7 +34,7 @@ Resources:
             Value: "Ansible"
         SecurityGroupIds: 
           - !ImportValue 
-            'Fn::Sub': 'privateToolsSecGroup'
+            'Fn::Sub': 'PrivateSecurityGroupTools-mlm'
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
           'Fn::Sub': 'PrivateSubnetTools-mlm'
@@ -53,7 +53,7 @@ Resources:
             Value: "Jenkins"
         SecurityGroupIds: 
           - !ImportValue 
-            'Fn::Sub': 'privateToolsSecGroup'
+            'Fn::Sub': 'PrivateSecurityGroupTools-mlm'
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
           'Fn::Sub': 'PrivateSubnetTools-mlm'
@@ -110,7 +110,7 @@ Resources:
             Value: "Bastion"
         SecurityGroupIds: 
           - !ImportValue 
-            'Fn::Sub': 'pubSecurityGroupID-mlm'
+            'Fn::Sub': 'PublicSecurityGroupIDTools-mlm'
         KeyName: !Ref BastionKeyName
         SubnetId: !ImportValue
           'Fn::Sub': 'PublicSubnetID-mlm'
