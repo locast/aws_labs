@@ -21,7 +21,10 @@ Parameters:
 
   InstanceTypeMonitoring:
     Type: String
-
+    
+  BastionKeyName:
+    Type: String
+  
 Resources: 
   Ansible: 
       Type: AWS::EC2::Instance
