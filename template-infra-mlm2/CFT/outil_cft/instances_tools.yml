@@ -19,6 +19,9 @@ Parameters:
   InstanceTypeMonitoring:
     Type: String
     
+  InstanceTypeBastion:
+    Type: String
+    
   BastionKeyName:
     Type: String
   
@@ -88,7 +91,7 @@ Resources:
         Tags:
           -        
             Key: "Name"
-            Value: "ELK"
+            Value: "Monitoring"
         SecurityGroupIds: 
           - !ImportValue 
             'Fn::Sub': 'PrivateSubnetTools-mlm'
