@@ -13,9 +13,6 @@ Parameters:
   InstanceTypeWorker:
     Type: String
 
-  InstanceTypeBastion:
-    Type: String
-
   Resources: 
   Manager1: 
       Type: AWS::EC2::Instance
