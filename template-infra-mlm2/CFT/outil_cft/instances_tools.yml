@@ -35,6 +35,10 @@ Resources:
           -        
             Key: "Name"
             Value: "Ansible"
+            Key: "project"
+            Value: "docker-mlm"
+            Key: "role"
+            Value: "Ansible"
         SecurityGroupIds: 
           - !ImportValue 
             'Fn::Sub': 'PrivateSecurityGroupTools-mlm'
@@ -53,6 +57,10 @@ Resources:
         Tags:
           -        
             Key: "Name"
+            Value: "Jenkins"
+            Key: "project"
+            Value: "docker-mlm"
+            Key: "role"
             Value: "Jenkins"
         SecurityGroupIds: 
           - !ImportValue 
@@ -73,6 +81,10 @@ Resources:
           -        
             Key: "Name"
             Value: "Gitlab"
+            Key: "project"
+            Value: "docker-mlm"
+            Key: "role"
+            Value: "Gitlab"
         SecurityGroupIds: 
           - !ImportValue 
             'Fn::Sub': 'PrivateSubnetTools-mlm'
@@ -91,7 +103,11 @@ Resources:
         Tags:
           -        
             Key: "Name"
-            Value: "Monitoring"
+            Value: "ElK"
+            Key: "project"
+            Value: "docker-mlm"
+            Key: "role"
+            Value: "ELK"
         SecurityGroupIds: 
           - !ImportValue 
             'Fn::Sub': 'PrivateSubnetTools-mlm'
@@ -110,6 +126,10 @@ Resources:
         Tags:
           -        
             Key: "Name"
+            Value: "Bastion"
+            Key: "project"
+            Value: "docker-mlm"
+            Key: "role"
             Value: "Bastion"
         SecurityGroupIds: 
           - !ImportValue 
