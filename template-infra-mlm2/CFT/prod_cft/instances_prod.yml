@@ -23,6 +23,10 @@ Resources:
             -        
               Key: "Name"
               Value: "Manager1"
+              Key: "project"
+              Value: "docker-mlm"
+              Key: "role"
+              Value: "Manager1"
           SecurityGroupIds: 
             - !ImportValue 
               'Fn::Sub': 'PrivateSecurityGroupIDProd-mlm'
@@ -41,6 +45,10 @@ Resources:
           Tags:
             -        
               Key: "Name"
+              Value: "Manager2"
+              Key: "project"
+              Value: "docker-mlm"
+              Key: "role"
               Value: "Manager2"
           SecurityGroupIds: 
             - !ImportValue 
@@ -61,6 +69,10 @@ Resources:
             -        
               Key: "Name"
               Value: "Manager3"
+              Key: "project"
+              Value: "docker-mlm"
+              Key: "role"
+              Value: "Manager3"
           SecurityGroupIds: 
             - !ImportValue 
               'Fn::Sub': 'PrivateSecurityGroupIDProd-mlm'
@@ -80,6 +92,10 @@ Resources:
             -
               Key: "Name"
               Value: "worker"
+              Key: "project"
+              Value: "docker-mlm"
+              Key: "role"
+              Value: "Worker"
           SecurityGroupIds: 
             - !ImportValue 
               'Fn::Sub': 'PrivateSecurityGroupIDProd-mlm'
@@ -99,6 +115,10 @@ Resources:
             -        
               Key: "Name"
               Value: "DTR"
+              Key: "project"
+              Value: "docker-mlm"
+              Key: "role"
+              Value: "WokerDTR"
           SecurityGroupIds: 
             - !ImportValue 
               'Fn::Sub': 'PrivateSecurityGroupIDProd-mlm'
