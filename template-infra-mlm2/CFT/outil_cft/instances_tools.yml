@@ -16,9 +16,6 @@ Parameters:
   InstanceTypeGitlab:
     Type: String
 
-  InstanceTypeDatabase:
-    Type: String
-
   InstanceTypeMonitoring:
     Type: String
     
