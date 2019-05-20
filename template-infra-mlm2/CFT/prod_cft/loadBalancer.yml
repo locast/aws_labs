@@ -52,7 +52,7 @@ Resources:
       Port: !Ref UCPGPort
       Protocol: !Ref UCPGProtocol
       VpcId: !ImportValue 
-        'Fn::Sub': 'VPCProd-mlm'
+        'Fn::Sub': 'VPCIDProd-mlm'
       TargetType: instance 
       Targets: 
         -
@@ -83,7 +83,7 @@ Resources:
       Port: !Ref DTRGPort
       Protocol: !Ref DTRProtocol
       VpcId: !ImportValue 
-        'Fn::Sub': 'VPCProd-mlm'
+        'Fn::Sub': 'VPCIDProd-mlm'
       TargetType: instance 
       Targets: 
         -
@@ -106,7 +106,7 @@ Resources:
       Port: !Ref AppPort
       Protocol: !Ref AppProtocol
       VpcId: !ImportValue 
-        'Fn::Sub': 'VPCProd-mlm'
+        'Fn::Sub': 'VPCIDProd-mlm'
       TargetType: instance 
       Targets: 
         -
