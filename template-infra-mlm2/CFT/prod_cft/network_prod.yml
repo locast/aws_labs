@@ -1,301 +1,287 @@
 AWSTemplateFormatVersion: 2010-09-09
 
-Description: "Network for Docker lab"
+Description: Docker cluster root stack
 
-Parameters:  
+Parameters:
 
   PublicSubnetProdCidr:
     Type: String
+    MinLength: 8
+    MaxLength: 19
+    AllowedValues: 
+      - 172.30.0.0/27
+      - 172.30.0.32/27
+      - 172.30.0.64/27
+      - 172.30.0.96/27
+      - 172.30.0.128/27
+      - 172.30.0.160/27
+      - 172.30.0.192/27
+      - 172.30.0.225/27
+    Default: 172.30.0.0/27
 
   LoadBalancerSubnetProdCidr:
     Type: String
+    MinLength: 8
+    MaxLength: 19
+    AllowedValues: 
+      - 172.30.0.0/27
+      - 172.30.0.32/27
+      - 172.30.0.64/27
+      - 172.30.0.96/27
+      - 172.30.0.128/27
+      - 172.30.0.160/27
+      - 172.30.0.192/27
+      - 172.30.0.225/27
+    Default: 172.30.0.32/27
 
-  PrivateSubnetProdCidr: 
+  PrivateSubnetProdCidr:
     Type: String
+    MinLength: 8
+    MaxLength: 19
+    AllowedValues: 
+      - 172.30.0.0/27
+      - 172.30.0.32/27
+      - 172.30.0.64/27
+      - 172.30.0.96/27
+      - 172.30.0.128/27
+      - 172.30.0.160/27
+      - 172.30.0.192/27
+      - 172.30.0.225/27
+    Default: 172.30.0.64/27
 
-Resources: 
+  PublicSubnetToolsCidr:
+    Type: String
+    MinLength: 8
+    MaxLength: 19
+    AllowedValues: 
+      - 172.30.1.0/27
+      - 172.30.1.32/27
+      - 172.30.1.64/27
+      - 172.30.1.96/27
+      - 172.30.1.128/27
+      - 172.30.1.160/27
+      - 172.30.1.192/27
+      - 172.30.1.225/27
+    Default: 172.30.1.0/27
 
-  VPCProd:
-    Type: 'AWS::EC2::VPC'
-    Properties:
-      CidrBlock: 172.30.0.0/24
-      Tags:
-        - Key: Name
-          Value: VPCProd-mlm
+  LoadBalancerSubnetToolsCidr:
+    Type: String
+    MinLength: 8
+    MaxLength: 19
+    AllowedValues: 
+      - 172.30.1.0/27
+      - 172.30.1.32/27
+      - 172.30.1.64/27
+      - 172.30.1.96/27
+      - 172.30.1.128/27
+      - 172.30.1.160/27
+      - 172.30.1.192/27
+      - 172.30.1.225/27
+    Default: 172.30.1.32/27
 
-  EIPProd:
-    Type: 'AWS::EC2::EIP'
-    DependsOn: PublicSubnetProd
+  PrivateSubnetToolsCidr:
+    Type: String
+    MinLength: 8
+    MaxLength: 19
+    AllowedValues: 
+      - 172.30.1.0/27
+      - 172.30.1.32/27
+      - 172.30.1.64/27
+      - 172.30.1.96/27
+      - 172.30.1.128/27
+      - 172.30.1.160/27
+      - 172.30.1.192/27
+      - 172.30.1.225/27
+    Default: 172.30.1.64/27
 
-  PublicSubnetProd:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      VpcId: !Ref VPCProd
-      AvailabilityZone: us-east-1a
-      CidrBlock: !Ref PublicSubnetProdCidr
-      Tags:
-        - Key: Name
-          Value: PublicSubnetProd-mlm
-    DependsOn: VPCProd
+  InstancesImageId:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    Default: ami-0a313d6098716f372
 
-  LoadBalancerSubnetProd:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      VpcId: !Ref VPCProd
-      AvailabilityZone: us-east-1b
-      CidrBlock: !Ref LoadBalancerSubnetProdCidr
-      Tags:
-        - Key: Name
-          Value: LoadBalancerSubnetProd-mlm
-    DependsOn: VPCProd
-
-  PrivateSubnetProd:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      VpcId: !Ref VPCProd
-      CidrBlock: !Ref PrivateSubnetProdCidr
-      Tags:
-        - Key: Name
-          Value: PrivateSubnetProd-mlm
-
-  InternetGatewayProd:
-    Type: 'AWS::EC2::InternetGateway'
-    Properties:
-      Tags:
-        - Key: Name
-          Value: InternetGatewayProd-mlm
-    DependsOn: VPCProd
-
-  NatGatewayProd:
-    Type: 'AWS::EC2::NatGateway'
-    Properties:
-      AllocationId: !GetAtt 
-        - EIPProd
-        - AllocationId
-      SubnetId: !Ref PublicSubnetProd
-      Tags:
-        - Key: Name
-          Value: NatGatewayProd-mlm
-    DependsOn: EIPProd
-
-  VPCGatewayAttachmentProd:
-    Type: 'AWS::EC2::VPCGatewayAttachment'
-    Properties:
-      InternetGatewayId: !Ref InternetGatewayProd
-      VpcId: !Ref VPCProd
-
-#  VPCGatewayAttachmentLB:
-#    Type: 'AWS::EC2::VPCGatewayAttachment'
-#    Properties:
-#      InternetGatewayId: !Ref InternetGatewayLB
-#      VpcId: !Ref VPC
-
-  PublicRouteTableProd:
-    Type: 'AWS::EC2::RouteTable'
-    Properties:
-      VpcId: !Ref VPCProd
-      Tags:
-        - Key: Name
-          Value: PublicRouteTableProd-mlm
-
-  LoadBalancerRouteTableProd:
-    Type: 'AWS::EC2::RouteTable'
-    Properties:
-      VpcId: !Ref VPCProd
-      Tags:
-        - Key: Name
-          Value: LoadBalancerRouteTableProd-mlm
-
-  PrivateRouteTableProd:
-    Type: 'AWS::EC2::RouteTable'
-    Properties:
-      VpcId: !Ref VPCProd
-      Tags:
-        - Key: Name
-          Value: PrivateRouteTableProd-mlm
-
-  PublicRouteProd:
-    Type: 'AWS::EC2::Route'
-    Properties:
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGatewayProd
-      RouteTableId: !Ref PublicRouteTableProd
-
-  LoadBalancerRouteProd:
-    Type: 'AWS::EC2::Route'
-    Properties:
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGatewayProd
-      RouteTableId: !Ref LoadBalancerRouteTableProd
-
-  PrivateRouteProd:
-    Type: 'AWS::EC2::Route'
-    Properties:
-      DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGatewayProd
-      RouteTableId: !Ref PrivateRouteTableProd
-
-  PublicSubnetRouteTableAssociationProd:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      RouteTableId: !Ref PublicRouteTableProd
-      SubnetId: !Ref PublicSubnetProd
-    DependsOn: PublicRouteTableProd
-
-  LoadBalancerSubnetRouteTableAssociationProd:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      RouteTableId: !Ref LoadBalancerRouteTableProd
-      SubnetId: !Ref LoadBalancerSubnetProd
-    DependsOn: LoadBalancerRouteTableProd
-
-  PrivateSubnetRouteTableAssociationProd:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      RouteTableId: !Ref PrivateRouteTableProd
-      SubnetId: !Ref PrivateSubnetProd
-    DependsOn: PrivateRouteTableProd
-
-  PublicSecurityGroupProd:
-    Type: 'AWS::EC2::SecurityGroup'
-    Properties:
-      GroupName: PublicSecurityGroupProd-mlm
-      GroupDescription: public security group rules
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
-      VpcId: !Ref VPCProd
-      Tags:
-        - Key: Name
-          Value: PublicSecurityGroupProd-mlm
-
-  PrivateSecurityGroupProd:
-    Type: 'AWS::EC2::SecurityGroup'
-    Properties:
-      GroupName: PrivateSecurityGroupProd-mlm
-      GroupDescription: private security group rules
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 12376
-          ToPort: 12388
-          CidrIp: 172.30.0.0/24
-        - IpProtocol: tcp
-          FromPort: 10250
-          ToPort: 10250
-          CidrIp: 172.30.0.0/24
-        - IpProtocol: tcp
-          FromPort: 9099
-          ToPort: 9099
-          CidrIp: 172.30.0.0/24
-        - IpProtocol: tcp
-          FromPort: 7946
-          ToPort: 7946
-          CidrIp: 172.30.0.0/24
-        - IpProtocol: udp
-          FromPort: 7946
-          ToPort: 7946
-          CidrIp: 172.30.0.0/24
-        - IpProtocol: tcp
-          FromPort: 6443
-          ToPort: 6444
-          CidrIp: 172.30.0.0/24
-        - IpProtocol: udp
-          FromPort: 4789
-          ToPort: 4789
-          CidrIp: 172.30.0.0/24
-        - IpProtocol: tcp
-          FromPort: 2376
-          ToPort: 2377
-          CidrIp: 172.30.0.0/24
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          CidrIp: 172.30.0.0/24
-        - IpProtocol: tcp
-          FromPort: 179
-          ToPort: 179
-          CidrIp: 172.30.0.0/24
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 172.30.0.0/24
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 172.30.0.0/24
-      VpcId: !Ref VPCProd
-      Tags:
-        - Key: Name
-          Value: PrivateSecurityGroupProd-mlm
-
-  LoadBalancerSecurityGroupProd:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: LoadBalancerSecurityGroupProd-mlm
-      GroupDescription: loadbalancer security group rules
-      SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
-        CidrIp: 0.0.0.0/0
-      - IpProtocol: tcp
-        FromPort: 443
-        ToPort: 443
-        CidrIp: 0.0.0.0/0
-      VpcId: !Ref VPCProd
-      Tags: 
-        -
-          Key: Name
-          Value: LoadBalancerSecurityGroupProd-mlm
-
-Outputs:
-
-  VPCIDProd:
-    Description: VPCIDProd
-    Value: !Ref VPCProd
-    Export:
-      Name: !Sub VPCIDProd-mlm
-
-  PublicSubnetIDProd:
-    Description: The subnet ID to use for public web servers
-    Value: !Ref PublicSubnetProd
-    Export:
-      Name: !Sub PublicSubnetIDProd-mlm
-
-  LoadBalancerSubnetIDProd:
-    Description: The subnet ID to use for public web servers
-    Value: !Ref LoadBalancerSubnetProd
-    Export:
-      Name: !Sub LoadBalancerSubnetIDProd-mlm
-
-  PrivateSubnetIDProd:
-    Description: The subnet ID to use for public web servers
-    Value: !Ref PrivateSubnetProd
-    Export:
-      Name: !Sub PrivateSubnetIDProd-mlm
-
-  PublicSecurityGroupIDProd:
-    Description: The security group ID to use for public web servers
-    Value: !GetAtt 
-      - PublicSecurityGroupProd
-      - GroupId
-    Export:
-      Name: !Sub PublicSecurityGroupIDProd-mlm
+  InstancesKeyName:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    Default: devops_key
   
-  LoadBalancerSecurityGroupIDProd:
-    Description: The security group ID to use for public web servers
-    Value: !GetAtt 
-      - LoadBalancerSecurityGroupProd
-      - GroupId
-    Export:
-      Name: !Sub LoadBalancerSecurityGroupIDProd-mlm
+  BastionKeyName:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    Default: Bastion-mlm
 
-  PrivateSecurityGroupIDProd:
-    Description: The security group ID to use for public web servers
-    Value: !GetAtt 
-      - PrivateSecurityGroupProd
-      - GroupId
-    Export:
-      Name: !Sub PrivateSecurityGroupIDProd-mlm
+  InstanceTypeManager:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.medium
+      - t2.xlarge
+      - c5n.xlarge
+    Default: t2.medium
+  
+  InstanceTypeWorker:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.medium
+      - t2.xlarge
+      - c5n.xlarge
+    Default: t2.medium
+
+  InstanceTypeBastion:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.micro
+      - t2.nano
+    Default: t2.nano
+
+  InstanceTypeAnsible:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.micro
+      - t2.nano
+    Default: t2.nano
+  
+  InstanceTypeJenkins:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.micro
+      - t2.nano
+    Default: t2.nano
+
+  InstanceTypeGitlab:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.micro
+      - t2.nano
+    Default: t2.nano
+
+  InstanceTypeMonitoring:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.micro
+      - t2.nano
+    Default: t2.nano
+
+  UCPGPort:
+    Type: Number
+    Default: 443
+  
+  UCPGProtocol:
+    Type: String
+    AllowedValues: 
+      - HTTP
+      - HTTPS
+    Default: HTTP
+
+  DTRGPort:
+    Type: Number
+    Default: 80
+      
+  DTRProtocol:
+    Type: String
+    AllowedValues: 
+      - HTTP
+      - HTTPS
+    Default: HTTP
+
+  AppPort:
+    Type: Number
+    Default: 8080
+
+  AppProtocol:
+    Type: String
+    AllowedValues: 
+      - HTTP
+      - HTTPS
+    Default: HTTP
+
+Resources:
+
+  NetworkStackProd:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/prod-network.yml"
+      Parameters:
+        PublicSubnetProdCidr: !Ref PublicSubnetProdCidr
+        LoadBalancerSubnetProdCidr: !Ref LoadBalancerSubnetProdCidr
+        PrivateSubnetProdCidr: !Ref PrivateSubnetProdCidr
+      Tags:
+        - Key: Name
+          Value: NetworkStackProd-mlm
+
+  InstancesStackProd:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/prod-instances.yml"
+      Parameters:
+        InstancesImageId: !Ref InstancesImageId
+        InstancesKeyName: !Ref InstancesKeyName
+        BastionKeyName: !Ref BastionKeyName
+        InstanceTypeManager: !Ref InstanceTypeManager
+        InstanceTypeWorker: !Ref InstanceTypeWorker
+        InstanceTypeBastion: !Ref InstanceTypeBastion
+      Tags:
+        - Key: Name
+          Value: InstancesStackProd-mlm
+    DependsOn: NetworkStackProd 
+
+  LoadBalancerStackProd:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/prod-lb.yml"
+      Parameters:
+        UCPGPort: !Ref UCPGPort
+        UCPGProtocol: !Ref UCPGProtocol
+        DTRGPort: !Ref DTRGPort
+        DTRProtocol: !Ref DTRProtocol
+        AppPort: !Ref AppPort
+        AppProtocol: !Ref AppProtocol
+      Tags:
+        - Key: Name
+          Value: LoadBalancerProd-mlm
+    DependsOn: InstancesStackProd
+
+  NetworkStackTools:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/tools-network.yml"
+      Parameters:
+        PublicSubnetToolsCidr: !Ref PublicSubnetToolsCidr
+        LoadBalancerSubnetToolsCidr: !Ref LoadBalancerSubnetToolsCidr
+        PrivateSubnetToolsCidr: !Ref PrivateSubnetToolsCidr
+      Tags:
+        - Key: Name
+          Value: NetworkStackTools-mlm
+
+  InstancesStackTools:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/tools-instances.yml"
+      Parameters:
+        InstancesImageId: !Ref InstancesImageId
+        InstancesKeyName: !Ref InstancesKeyName
+        BastionKeyName: !Ref BastionKeyName
+        InstanceTypeBastion: !Ref InstanceTypeBastion
+        InstanceTypeAnsible: !Ref InstanceTypeAnsible
+        InstanceTypeJenkins: !Ref InstanceTypeJenkins
+        InstanceTypeGitlab: !Ref InstanceTypeGitlab
+        InstanceTypeMonitoring: !Ref InstanceTypeMonitoring
+      Tags:
+        - Key: Name
+          Value: InstancesStackTools-mlm
+    DependsOn: NetworkStackTools
