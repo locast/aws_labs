@@ -6,9 +6,6 @@ Parameters:
     
   InstancesKeyName:
     Type: String
-  
-  BastionKeyName:
-    Type: String
 
   InstanceTypeManager:
     Type: String
@@ -19,7 +16,6 @@ Parameters:
   InstanceTypeBastion:
     Type: String
 
-  
   Resources: 
   Manager1: 
       Type: AWS::EC2::Instance
