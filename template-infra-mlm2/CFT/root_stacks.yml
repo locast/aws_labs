@@ -1,6 +1,9 @@
 AWSTemplateFormatVersion: 2010-09-09
+
 Description: Docker cluster root stack
+
 Parameters:
+
   PublicSubnetProdCidr:
     Type: String
     MinLength: 8
@@ -45,6 +48,51 @@ Parameters:
       - 172.30.0.192/27
       - 172.30.0.225/27
     Default: 172.30.0.64/27
+
+  PublicSubnetToolsCidr:
+    Type: String
+    MinLength: 8
+    MaxLength: 19
+    AllowedValues: 
+      - 172.30.1.0/27
+      - 172.30.1.32/27
+      - 172.30.1.64/27
+      - 172.30.1.96/27
+      - 172.30.1.128/27
+      - 172.30.1.160/27
+      - 172.30.1.192/27
+      - 172.30.1.225/27
+    Default: 172.30.1.0/27
+
+  LoadBalancerSubnetToolsCidr:
+    Type: String
+    MinLength: 8
+    MaxLength: 19
+    AllowedValues: 
+      - 172.30.1.0/27
+      - 172.30.1.32/27
+      - 172.30.1.64/27
+      - 172.30.1.96/27
+      - 172.30.1.128/27
+      - 172.30.1.160/27
+      - 172.30.1.192/27
+      - 172.30.1.225/27
+    Default: 172.30.1.32/27
+
+  PrivateSubnetToolsCidr:
+    Type: String
+    MinLength: 8
+    MaxLength: 19
+    AllowedValues: 
+      - 172.30.1.0/27
+      - 172.30.1.32/27
+      - 172.30.1.64/27
+      - 172.30.1.96/27
+      - 172.30.1.128/27
+      - 172.30.1.160/27
+      - 172.30.1.192/27
+      - 172.30.1.225/27
+    Default: 172.30.1.64/27
 
   InstancesImageId:
     Type: String
@@ -93,6 +141,42 @@ Parameters:
       - t2.nano
     Default: t2.nano
 
+  InstanceTypeAnsible:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.micro
+      - t2.nano
+    Default: t2.nano
+  
+  InstanceTypeJenkins:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.micro
+      - t2.nano
+    Default: t2.nano
+
+  InstanceTypeGitlab:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.micro
+      - t2.nano
+    Default: t2.nano
+
+  InstanceTypeMonitoring:
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedValues: 
+      - t2.micro
+      - t2.nano
+    Default: t2.nano
+
   UCPGPort:
     Type: Number
     Default: 443
@@ -127,22 +211,23 @@ Parameters:
     Default: HTTP
 
 Resources:
-  NetworkStack:
+
+  NetworkStackProd:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/cf-templates-hfix7v22gvfa-us-east-1/template-infra-mlm2/network_stacks.yml"
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/prod-network.yaml"
       Parameters:
-        PublicSubnetCdir: !Ref PublicSubnetProdCidr
-        LBSubnetCdir: !Ref LoadBalancerSubnetProdCidr
-        PrivateSubnetCdir: !Ref PrivateSubnetProdCidr
+        PublicSubnetProdCidr: !Ref PublicSubnetProdCidr
+        LoadBalancerSubnetProdCidr: !Ref LoadBalancerSubnetProdCidr
+        PrivateSubnetProdCidr: !Ref PrivateSubnetProdCidr
       Tags:
         - Key: Name
-          Value: NetworkStack-mlm
+          Value: NetworkStackProd-mlm
 
-  InstancesStack:
+  InstancesStackProd:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/cf-templates-hfix7v22gvfa-us-east-1/template-infra-mlm2/instances_stacks.yml"
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/prod-instances.yaml"
       Parameters:
         InstancesImageId: !Ref InstancesImageId
         InstancesKeyName: !Ref InstancesKeyName
@@ -152,13 +237,13 @@ Resources:
         InstanceTypeBastion: !Ref InstanceTypeBastion
       Tags:
         - Key: Name
-          Value: InstancesStack-mlm
+          Value: InstancesStackProd-mlm
+    DependsOn: NetworkStackProd 
 
-    DependsOn: NetworkStack 
-  LoadBalancerStack:
+  LoadBalancerStackProd:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/cf-templates-hfix7v22gvfa-us-east-1/template-infra-mlm2/loadBalancer_stacks.yml"
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/prod-loadbalancer.yaml"
       Parameters:
         UCPGPort: !Ref UCPGPort
         UCPGProtocol: !Ref UCPGProtocol
@@ -169,4 +254,34 @@ Resources:
       Tags:
         - Key: Name
           Value: LoadBalancerProd-mlm
-    DependsOn: InstancesStack 
+    DependsOn: InstancesStackProd
+
+  NetworkStackTools:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/tools-network.yaml"
+      Parameters:
+        PublicSubnetToolsCidr: !Ref PublicSubnetToolsCidr
+        LoadBalancerSubnetToolsCidr: !Ref LoadBalancerSubnetToolsCidr
+        PrivateSubnetToolsCidr: !Ref PrivateSubnetToolsCidr
+      Tags:
+        - Key: Name
+          Value: NetworkStackTools-mlm
+
+  InstancesStackTools:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/tools-instances.yaml"
+      Parameters:
+        InstancesImageId: !Ref InstancesImageId
+        InstancesKeyName: !Ref InstancesKeyName
+        BastionKeyName: !Ref BastionKeyName
+        InstanceTypeBastion: !Ref InstanceTypeBastion
+        InstanceTypeAnsible: !Ref InstanceTypeAnsible
+        InstanceTypeJenkins: !Ref InstanceTypeJenkins
+        InstanceTypeGitlab: !Ref InstanceTypeGitlab
+        InstanceTypeMonitoring: !Ref InstanceTypeMonitoring
+      Tags:
+        - Key: Name
+          Value: InstancesStackTools-mlm
+    DependsOn: NetworkStackTools
