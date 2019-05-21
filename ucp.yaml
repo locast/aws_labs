@@ -1,0 +1,23 @@
+- name: Install Docker UCP
+  hosts: ucp
+  gather_facts: false
+  become: true
+
+  vars_files:
+    - ./vars
+
+  tasks:
+    - name: Copy the license
+      copy: src="docker_subscription.lic" dest="/tmp/docker_subscription.lic"
+    - name: Install swarm leader and first UCP node
+      shell: docker container run --rm --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:{{ ucp_version }} install --host-address {{ ucp_ip }} --admin-username={{ ucp_username }} --admin-password={{ ucp_password }} --license "$(cat /tmp/docker_subscription.lic)" {{ san_all_formatted }}
+    - name: Get swarm manager token
+      shell: echo `docker swarm join-token manager` | cut -f2 -d':' | sed 's|\\||g'
+      changed_when: false
+      register: manager_token
+    - name: Get swarm worker token
+      shell: echo `docker swarm join-token worker` | cut -f2 -d':' | sed 's|\\||g'
+      changed_when: false
+      register: worker_token
+    
+    
