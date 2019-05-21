@@ -46,8 +46,8 @@ Resources:
         SubnetId: !ImportValue
           'Fn::Sub': 'PrivateSubnetTools-mlm'
         UserData:
-        Fn::Base64: !Sub |
-          apt install python
+          Fn::Base64: !Sub |
+            apt install python
     
   Jenkins: 
       Type: AWS::EC2::Instance
@@ -69,8 +69,8 @@ Resources:
         SubnetId: !ImportValue
           'Fn::Sub': 'PrivateSubnetTools-mlm'
         UserData:
-        Fn::Base64: !Sub |
-          apt install python
+            Fn::Base64: !Sub |
+              apt install python
  
   Gitlab: 
       Type: AWS::EC2::Instance
@@ -92,8 +92,8 @@ Resources:
         SubnetId: !ImportValue
           'Fn::Sub': 'PrivateSubnetTools-mlm'
         UserData:
-        Fn::Base64: !Sub |
-          apt install python
+            Fn::Base64: !Sub |
+              apt install python
 
   ELK: 
       Type: AWS::EC2::Instance
@@ -115,8 +115,8 @@ Resources:
         SubnetId: !ImportValue
           'Fn::Sub': 'PrivateSubnetTools-mlm'
         UserData:
-        Fn::Base64: !Sub |
-          apt install python
+            Fn::Base64: !Sub |
+              apt install python
 
   Bastion: 
       Type: AWS::EC2::Instance
@@ -138,12 +138,9 @@ Resources:
         SubnetId: !ImportValue
           'Fn::Sub': 'PublicSubnetID-mlm'
         UserData:
-        Fn::Base64: !Sub |
-          apt install python
-        UserData:
-        Fn::Base64: !Sub |
-          apt install python
-
+            Fn::Base64: !Sub |
+              apt install python
+        
 Outputs:
   AnsibleID:
     Description: The subnet ID to use for public web servers
