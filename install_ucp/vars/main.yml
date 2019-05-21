@@ -1,0 +1,6 @@
+ucp_version: '3.0.7'
+ucp_ip: '35.200.189.84'
+ucp_username: 'omar'
+ucp_password: 'password'
+san_all_formatted: '35.200.189.84 ucp.exemple.com manage1'
+

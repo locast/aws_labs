@@ -1,0 +1,8 @@
+[all:vars]
+ansible_user='ot3hn00b'
+ansible_become='yes'
+ansible_become_pass='password'
+ansible_become_method='sudo'
+
+[ucp]
+35.200.189.84 ansible_ssh_port=22 ansible_python_interpreter='/usr/bin/python3'
