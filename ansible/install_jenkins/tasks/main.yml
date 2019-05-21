@@ -1,0 +1,49 @@
+- name: Install Jenkins on Ubuntu
+  hosts: jenkins
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Add Java repo
+      apt_repository:
+        validate_certs: no
+        repo: 'ppa:openjdk-r/ppa'
+        state: present
+
+    - name: Import Jenkins key
+      apt_key:
+        state: present
+        url: https://pkg.jenkins.io/debian/jenkins-ci.org.key
+
+    - name: Add Jenkins repo
+      apt_repository: 
+        repo: 'deb https://pkg.jenkins.io/debian-stable binary/'
+        state: present
+
+    - name: Install Jenkins
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - openjdk-8-jdk
+          - openjdk-8-source
+          - jenkins        
+
+    - name: Start & Enable Jenkins
+      systemd:
+        name: jenkins
+        state: started
+        enabled: true
+
+    - name: Sleep for 30 seconds and continue with play
+      wait_for: timeout=30
+
+    - name: Get init password Jenkins
+      shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+      changed_when: false
+      register: result
+
+    - name: Print init password Jenkins
+      debug:
+        var: result.stdout
