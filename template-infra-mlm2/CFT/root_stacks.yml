@@ -215,7 +215,7 @@ Resources:
   NetworkStackProd:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/prod-network.yaml"
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/prod-network.yml"
       Parameters:
         PublicSubnetProdCidr: !Ref PublicSubnetProdCidr
         LoadBalancerSubnetProdCidr: !Ref LoadBalancerSubnetProdCidr
@@ -227,7 +227,7 @@ Resources:
   InstancesStackProd:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/prod-instances.yaml"
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/prod-instances.yml"
       Parameters:
         InstancesImageId: !Ref InstancesImageId
         InstancesKeyName: !Ref InstancesKeyName
@@ -243,7 +243,7 @@ Resources:
   LoadBalancerStackProd:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/prod-loadbalancer.yaml"
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/prod-lb.yml"
       Parameters:
         UCPGPort: !Ref UCPGPort
         UCPGProtocol: !Ref UCPGProtocol
@@ -259,7 +259,7 @@ Resources:
   NetworkStackTools:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/tools-network.yaml"
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/tools-network.yml"
       Parameters:
         PublicSubnetToolsCidr: !Ref PublicSubnetToolsCidr
         LoadBalancerSubnetToolsCidr: !Ref LoadBalancerSubnetToolsCidr
@@ -271,7 +271,7 @@ Resources:
   InstancesStackTools:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/tools-instances.yaml"
+      TemplateURL: "https://s3.amazonaws.com/docker-mlm/Stacks/tools-instances.yml"
       Parameters:
         InstancesImageId: !Ref InstancesImageId
         InstancesKeyName: !Ref InstancesKeyName
