@@ -52,7 +52,7 @@ def lambda_handler(event, context):
     #format tag as a python dictionary
     instance_tags = {}
     for tags in base_tags:
-    	instance_tags[tags['Key']] = tags['Value']
+        instance_tags[tags['Key']] = tags['Value']
 
     if debug:
         logger.info('tags: ' + str(instance_tags))
@@ -70,7 +70,7 @@ def lambda_handler(event, context):
 
             ### TODO ####
             try:
-            	# Create an S3 client
+                # Create an S3 client
                 s3 = boto3.client('s3')
                 
                 #pass
