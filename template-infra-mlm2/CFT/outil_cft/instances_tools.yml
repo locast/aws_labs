@@ -41,10 +41,10 @@ Resources:
             Value: "Ansible"
         SecurityGroupIds: 
           - !ImportValue 
-            'Fn::Sub': 'PrivateSecurityGroupTools-mlm'
+            'Fn::Sub': 'PrivateSecurityGroupIDTools-mlm'
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
-          'Fn::Sub': 'PrivateSubnetTools-mlm'
+          'Fn::Sub': 'PrivateSubnetIDTools-mlm'
         UserData:
           Fn::Base64: !Sub |
             apt install python
@@ -64,10 +64,10 @@ Resources:
             Value: "Jenkins"
         SecurityGroupIds: 
           - !ImportValue 
-            'Fn::Sub': 'PrivateSecurityGroupTools-mlm'
+            'Fn::Sub': 'PrivateSecurityGroupIDTools-mlm'
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
-          'Fn::Sub': 'PrivateSubnetTools-mlm'
+          'Fn::Sub': 'PrivateSubnetIDTools-mlm'
         UserData:
             Fn::Base64: !Sub |
               apt install python
@@ -87,10 +87,10 @@ Resources:
             Value: "Gitlab"
         SecurityGroupIds: 
           - !ImportValue 
-            'Fn::Sub': 'PrivateSubnetTools-mlm'
+            'Fn::Sub': 'PrivateSecurityGroupIDTools-mlm'
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
-          'Fn::Sub': 'PrivateSubnetTools-mlm'
+          'Fn::Sub': 'PrivateSubnetIDTools-mlm'
         UserData:
             Fn::Base64: !Sub |
               apt install python
@@ -110,10 +110,10 @@ Resources:
             Value: "ELK"
         SecurityGroupIds: 
           - !ImportValue 
-            'Fn::Sub': 'PrivateSubnetTools-mlm'
+            'Fn::Sub': 'PrivateSecurityGroupIDTools-mlm'
         KeyName: !Ref InstancesKeyName
         SubnetId: !ImportValue
-          'Fn::Sub': 'PrivateSubnetTools-mlm'
+          'Fn::Sub': 'PrivateSubnetIDTools-mlm'
         UserData:
             Fn::Base64: !Sub |
               apt install python
@@ -136,7 +136,7 @@ Resources:
             'Fn::Sub': 'PublicSecurityGroupIDTools-mlm'
         KeyName: !Ref BastionKeyName
         SubnetId: !ImportValue
-          'Fn::Sub': 'PublicSubnetID-mlm'
+          'Fn::Sub': 'PublicSubnetIDTools-mlm'
         UserData:
             Fn::Base64: !Sub |
               apt install python
