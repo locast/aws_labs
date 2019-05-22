@@ -231,7 +231,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 172.30.0.0/24
+          CidrIp: 172.30.0.0/24,172.30.1.0/24
       VpcId: !Ref VPCProd
       Tags:
         - Key: Name
