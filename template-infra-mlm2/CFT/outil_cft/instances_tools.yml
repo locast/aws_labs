@@ -35,8 +35,10 @@ Resources:
           -        
             Key: "Name"
             Value: "Ansible"
+          -
             Key: "project"
             Value: "docker-mlm"
+          -
             Key: "role"
             Value: "Ansible"
         SecurityGroupIds: 
@@ -58,8 +60,10 @@ Resources:
           -        
             Key: "Name"
             Value: "Jenkins"
+          -
             Key: "project"
             Value: "docker-mlm"
+          -
             Key: "role"
             Value: "Jenkins"
         SecurityGroupIds: 
@@ -81,8 +85,10 @@ Resources:
           -        
             Key: "Name"
             Value: "Gitlab"
+          -
             Key: "project"
             Value: "docker-mlm"
+          -  
             Key: "role"
             Value: "Gitlab"
         SecurityGroupIds: 
@@ -104,8 +110,10 @@ Resources:
           -        
             Key: "Name"
             Value: "ElK"
+          -
             Key: "project"
             Value: "docker-mlm"
+          -
             Key: "role"
             Value: "ELK"
         SecurityGroupIds: 
@@ -127,8 +135,10 @@ Resources:
           -        
             Key: "Name"
             Value: "Bastion"
+          - 
             Key: "project"
             Value: "docker-mlm"
+          -  
             Key: "role"
             Value: "Bastion"
         SecurityGroupIds: 
