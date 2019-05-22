@@ -128,6 +128,20 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGatewayTools
       RouteTableId: !Ref PrivateRouteTableTools
+      
+  PeeringRouteTools:
+  Type: AWS::EC2::Route
+  Properties:
+    DestinationCidrBlock: 172.30.0.0/24
+    RouteTableId: !Ref PrivateRouteTableTools
+    VpcPeeringConnectionId: !Ref VPCPeeringConnection
+    
+  PeeringRouteBastion:
+  Type: AWS::EC2::Route
+  Properties:
+    DestinationCidrBlock: 172.30.0.0/24
+    RouteTableId: !Ref PublicRouteTableTools
+    VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
   PublicSubnetRouteTableAssociationTools:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
