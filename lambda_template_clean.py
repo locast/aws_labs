@@ -85,9 +85,8 @@ def lambda_handler(event, context):
 
             if debug:
                 logger.info('current_inventory: ' + str(inventory))
-                logger.info('ansible_grp: ' + str(ansible_grp))
-                logger.info('inventory_line: ' + str(inventory_add_line))
-
+                logger.info('ansible_grp: ' + str(ansible_grps))
+                logger.info('inventory_line: ' + str(inventory_add_line)
             
             for ansible_grp in ansible_grps:
                 # check if the group already is in inventory
