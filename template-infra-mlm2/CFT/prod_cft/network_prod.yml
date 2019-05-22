@@ -134,6 +134,13 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGatewayProd
       RouteTableId: !Ref PrivateRouteTableProd
+      
+  PeeringRouteProd:
+  Type: AWS::EC2::Route
+  Properties:
+    DestinationCidrBlock: 172.30.1.0/24
+    RouteTableId: !Ref PrivateRouteTableProd
+    VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
   PublicSubnetRouteTableAssociationProd:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
@@ -248,7 +255,16 @@ Resources:
       Tags: 
         -
           Key: Name
-          Value: LoadBalancerSecurityGroupProd-mlm
+          Value: LoadBalancerSecurityGroupProd-mlm  
+
+  VPCPeeringConnection:  
+  Type: AWS::EC2::VPCPeeringConnection
+  Properties: 
+    PeerVpcId: !Ref VPCProd
+    Tags:
+      - Key: Name
+        Value: VpcPeeringConnection-mlm
+    VpcId: !Ref VPCTools
 
 Outputs:
 
