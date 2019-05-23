@@ -128,6 +128,20 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGatewayTools
       RouteTableId: !Ref PrivateRouteTableTools
+      
+  PeeringRouteTools:
+  Type: AWS::EC2::Route
+  Properties:
+    DestinationCidrBlock: 172.30.0.0/24
+    RouteTableId: !Ref PrivateRouteTableTools
+    VpcPeeringConnectionId: !Ref VPCPeeringConnection
+    
+  PeeringRouteBastion:
+  Type: AWS::EC2::Route
+  Properties:
+    DestinationCidrBlock: 172.30.0.0/24
+    RouteTableId: !Ref PublicRouteTableTools
+    VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
   PublicSubnetRouteTableAssociationTools:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
@@ -174,7 +188,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 172.30.0.0/24
+          CidrIp: 172.30.0.0/24,172.30.1.0/24
       VpcId: !Ref VPCTools
       Tags:
         - Key: Name
@@ -199,6 +213,15 @@ Resources:
         -
           Key: Name
           Value: LoadBalancerSecurityGroupTools-mlm
+          
+  VPCPeeringConnection:  
+  Type: AWS::EC2::VPCPeeringConnection
+  Properties: 
+    PeerVpcId: !Ref VPCIDProd-mlm
+    Tags:
+      - Key: Name
+        Value: VpcPeeringConnection-mlm
+    VpcId: !Ref VPCTools
 
 Outputs:
 
