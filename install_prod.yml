@@ -1,0 +1,124 @@
+
+[docker-manager-first]
+manager1 ansible_host="{{manager1->ip}}"
+
+[docker-managers]
+manager2 ansible_host="{{manager2->ip}}"
+manager3 ansible_host="{{manager3->ip}}"
+
+[docker-workers]
+worker1 ansible_host="{{worker1->ip}}"
+worker2 ansible_host="{{worker2->ip}}"
+
+[docker-api]
+manager1
+manager2
+manager3
+
+[docker-cloud]
+manager1
+manager2
+manager3
+########My params
+docker_ee_version : 18.09
+#################
+
+ansible_ssh_user: {{ssh-username}}
+ansible_ssh_private_key_file: "{{~/path/to/your/ssh_private_key}}"
+ansible_host_key_checking: false
+
+
+hosts: all
+remote_user: root
+become: yes
+become_method: sudo
+tasks:
+  - name: "update and upgrade"
+    apt: 
+      update_cache: yes
+      upgrade: dist
+
+  - name: "add docker repository"
+    apt_repository: 
+      repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable' 
+      state: present
+
+  - name: "get kernel version"
+    shell: uname -r
+    register: kernel
+
+
+###########""  install docker requirement
+
+
+  - name: "install docker"
+    apt: 
+      name: docker-ce={{docker_ee_version}} 
+      state: present 
+      update_cache: yes 
+      install_recommends: yes 
+      allow_unauthenticated: yes
+
+
+  - name: "add docker group"
+    group: 
+      name: docker 
+      state: present
+
+  - name: "add ubuntu to docker group"
+    user: 
+      name: ubuntu 
+      groups: docker 
+      append: yes
+
+  - name: "restart docker service"
+    service: 
+      name: docker 
+      state: started
+
+  - name: "enable docker service"
+    service: 
+      name: docker 
+      state: enabled
+
+  - name: "get docker info"
+    shell: docker info
+    register: docker_info
+    changed_when: false
+
+    
+hosts: manager1
+tasks:
+  - name: "create primary swarm manager"
+    shell: docker swarm init --advertise-addr {{ ansible_eth0['ipv4']['address'] }}
+
+  - name: "get docker swarm manager token"
+    shell: docker swarm join-token -q manager
+    register: manager_token
+
+  - name: "get docker swarm worker token"
+    shell: docker swarm join-token -q worker
+    register: worker_token
+
+
+hosts: manager
+tasks:
+
+  - name: "join swarm as a manager"
+    shell: "docker swarm join --token {{ hostvars['manager1']['manager_token']['stdout'] }} {{ hostvars['manager1']['ansible_eth0']['ipv4']['address'] }}:2377"
+
+
+hosts: docker-workers
+tasks:
+
+  - name: "join as a worker"
+    shell: "docker swarm join --token {{ hostvars['manager1']['worker_token']['stdout'] }} {{ hostvars['manager1']['ansible_eth0']['ipv4']['address'] }}:2377"
+
+hosts: manager1
+tasks:
+  - name: 'install ucp'
+
+
+hosts: dtr
+tasks:
+  - name: 'install dtr'
