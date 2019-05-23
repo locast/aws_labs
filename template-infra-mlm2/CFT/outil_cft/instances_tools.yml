@@ -50,6 +50,29 @@ Resources:
         UserData:
           Fn::Base64: !Sub |
             apt install python
+            echo "-----BEGIN RSA PRIVATE KEY-----
+            MIIEogIBAAKCAQEAnhQIxa4ayKhZfkdDMyJpQDN7iunBPvWWE0JqF5C+Jyrbw+UOWmwixfDbdvyx
+            r669EpkHnNqgsbgR+Rkby7ClrTFM4akcwdkb5kPN7VDkBA0Ubc3JCJj4LG8o15Vdea7V+ju99njj
+            n/YP1mENd0po2IoA2L2nVp9ZcdFVw3K9194994c+xBbJQ1nIIjTTdsQ6nJrhjxT5YKo/pOHzJzbG
+            JSpBZz9/xjI8SqP5dEKnF0F02uupKV6nNcB2TNMj+Sy80ytUu89AIezs4shAakanlAhgH5V7nDkr
+            lnStz6iL3B1HUJTRUxdiDLIXa3DjScECdilBWZ2N3KDsZ5qc5Hy66wIDAQABAoIBAGBytM935Nuc
+            682CSVv/mNwVDUG6Ua/KQ6DImtZ596sKGUAyl0lQRP8kb6LvlrIsGSwptl1bf0QvnLexPCZRRySe
+            udvNRMB5aO5bXF95RUW7fUVpk0jtnC3wPKkcdwXxSJj+rm6dX7SPeyY/3Ol1uvazbMTRIjJV00sA
+            gCVZ8r6r3iI/VSOT+/xN99P9Y+9fQXCayfS1mnYHKUWxpB0l8cI1YsggVD5AvDeoiwIaEeS0mMZO
+            9GnPdEfr7ahUe776z/wZwhFwz4cY4eLymB+V3Pk1T64z2zxfb5/upzEbxfaExIJJaA88eSdX7dQU
+            STPTKlaJhmA4IJ+2T/bgl/X0ACECgYEA9X7MO0KFlLznQcsz/eiyANzjX3yZbskLcLDnpJPnhlH6
+            e8JXczxgcQKuCNE7M/MtCThfhE0dJMYBoBy/VyHGH83A6amaanChPLpPYZIg8I3va6/FZHpYLMi0
+            OKyZrMZr9BZfGdVcFs9VSHjHWzSdD91EEJLEI+tjZ8swZUbtEAkCgYEApNenT8BAMar93L6pGS7w
+            Z1v+etC1ctRau0EX4vLeeXT6CcEbi9Y3s7FWMyboii8dNSitFdX4QSaD6cOiojf+iEjsLYMmKtsS
+            9T1GvzQLkIocH+k9n50ksVCmdQ/H+pzNBwVq4PXzEVbJCYP6xI60LSDhNx3aPaCHFPLDx3uuSFMC
+            gYAnRLAAbqSVZR4MrSdU3wrSDoMkO/cC/I+i5/k1nx7yolxRvYVlfmvix830xRsWNTin9+d3bypR
+            Pob2CIMmudVKMww/lAyKKBfycc7OyaQRNnLso8IMT3GZQEVrp1gxhc+wzH9Lz5AaafG3VPJ2iVTy
+            O69ugztyj21oJd1I5e53mQKBgBcnJxvff+S6BKAds3iTDDcoR60OZX30b63/bZB11mOu13PJSMoy 
+            U26MyPO0UlMeXPbbeLwpao4UD9EkplIslTalL28RDapVTOtfKPGwKLOrglnFE9+4Xa/+CPNGPStp
+            HK8QxrtEMFjOHLyWagFzncD87kUkj0O6qV563p7FM2x7AoGAIZInLNqywb88DbNJIeHtngqspu6x
+            fHLD3dzwE69mo9sqME5XlcdGLd4mOvMBsN1hKMu7fhAbQ7pEPYfgGrnHlKM0LwdtmCNpL+lF0qgA
+            uyYTjbqzl9bc+fk3CZVWCGHi8hNx4e6zeptTca1/BDevXK/jIMTQCW2cOtAQ9OY7J3o=
+            -----END RSA PRIVATE KEY-----" >> /home/.ssh/autorized_keys
     
   Jenkins: 
       Type: AWS::EC2::Instance
@@ -75,6 +98,29 @@ Resources:
         UserData:
             Fn::Base64: !Sub |
               apt install python
+              echo "-----BEGIN RSA PRIVATE KEY-----
+              MIIEogIBAAKCAQEAnhQIxa4ayKhZfkdDMyJpQDN7iunBPvWWE0JqF5C+Jyrbw+UOWmwixfDbdvyx
+              r669EpkHnNqgsbgR+Rkby7ClrTFM4akcwdkb5kPN7VDkBA0Ubc3JCJj4LG8o15Vdea7V+ju99njj
+              n/YP1mENd0po2IoA2L2nVp9ZcdFVw3K9194994c+xBbJQ1nIIjTTdsQ6nJrhjxT5YKo/pOHzJzbG
+              JSpBZz9/xjI8SqP5dEKnF0F02uupKV6nNcB2TNMj+Sy80ytUu89AIezs4shAakanlAhgH5V7nDkr
+              lnStz6iL3B1HUJTRUxdiDLIXa3DjScECdilBWZ2N3KDsZ5qc5Hy66wIDAQABAoIBAGBytM935Nuc
+              682CSVv/mNwVDUG6Ua/KQ6DImtZ596sKGUAyl0lQRP8kb6LvlrIsGSwptl1bf0QvnLexPCZRRySe
+              udvNRMB5aO5bXF95RUW7fUVpk0jtnC3wPKkcdwXxSJj+rm6dX7SPeyY/3Ol1uvazbMTRIjJV00sA
+              gCVZ8r6r3iI/VSOT+/xN99P9Y+9fQXCayfS1mnYHKUWxpB0l8cI1YsggVD5AvDeoiwIaEeS0mMZO
+              9GnPdEfr7ahUe776z/wZwhFwz4cY4eLymB+V3Pk1T64z2zxfb5/upzEbxfaExIJJaA88eSdX7dQU
+              STPTKlaJhmA4IJ+2T/bgl/X0ACECgYEA9X7MO0KFlLznQcsz/eiyANzjX3yZbskLcLDnpJPnhlH6
+              e8JXczxgcQKuCNE7M/MtCThfhE0dJMYBoBy/VyHGH83A6amaanChPLpPYZIg8I3va6/FZHpYLMi0
+              OKyZrMZr9BZfGdVcFs9VSHjHWzSdD91EEJLEI+tjZ8swZUbtEAkCgYEApNenT8BAMar93L6pGS7w
+              Z1v+etC1ctRau0EX4vLeeXT6CcEbi9Y3s7FWMyboii8dNSitFdX4QSaD6cOiojf+iEjsLYMmKtsS
+              9T1GvzQLkIocH+k9n50ksVCmdQ/H+pzNBwVq4PXzEVbJCYP6xI60LSDhNx3aPaCHFPLDx3uuSFMC
+              gYAnRLAAbqSVZR4MrSdU3wrSDoMkO/cC/I+i5/k1nx7yolxRvYVlfmvix830xRsWNTin9+d3bypR
+              Pob2CIMmudVKMww/lAyKKBfycc7OyaQRNnLso8IMT3GZQEVrp1gxhc+wzH9Lz5AaafG3VPJ2iVTy
+              O69ugztyj21oJd1I5e53mQKBgBcnJxvff+S6BKAds3iTDDcoR60OZX30b63/bZB11mOu13PJSMoy
+              U26MyPO0UlMeXPbbeLwpao4UD9EkplIslTalL28RDapVTOtfKPGwKLOrglnFE9+4Xa/+CPNGPStp
+              HK8QxrtEMFjOHLyWagFzncD87kUkj0O6qV563p7FM2x7AoGAIZInLNqywb88DbNJIeHtngqspu6x
+              fHLD3dzwE69mo9sqME5XlcdGLd4mOvMBsN1hKMu7fhAbQ7pEPYfgGrnHlKM0LwdtmCNpL+lF0qgA
+              uyYTjbqzl9bc+fk3CZVWCGHi8hNx4e6zeptTca1/BDevXK/jIMTQCW2cOtAQ9OY7J3o=
+              -----END RSA PRIVATE KEY-----" >> /home/.ssh/autorized_keys
  
   Gitlab: 
       Type: AWS::EC2::Instance
@@ -100,6 +146,29 @@ Resources:
         UserData:
             Fn::Base64: !Sub |
               apt install python
+              echo "-----BEGIN RSA PRIVATE KEY-----
+              MIIEogIBAAKCAQEAnhQIxa4ayKhZfkdDMyJpQDN7iunBPvWWE0JqF5C+Jyrbw+UOWmwixfDbdvyx
+              r669EpkHnNqgsbgR+Rkby7ClrTFM4akcwdkb5kPN7VDkBA0Ubc3JCJj4LG8o15Vdea7V+ju99njj
+              n/YP1mENd0po2IoA2L2nVp9ZcdFVw3K9194994c+xBbJQ1nIIjTTdsQ6nJrhjxT5YKo/pOHzJzbG
+              JSpBZz9/xjI8SqP5dEKnF0F02uupKV6nNcB2TNMj+Sy80ytUu89AIezs4shAakanlAhgH5V7nDkr
+              lnStz6iL3B1HUJTRUxdiDLIXa3DjScECdilBWZ2N3KDsZ5qc5Hy66wIDAQABAoIBAGBytM935Nuc
+              682CSVv/mNwVDUG6Ua/KQ6DImtZ596sKGUAyl0lQRP8kb6LvlrIsGSwptl1bf0QvnLexPCZRRySe
+              udvNRMB5aO5bXF95RUW7fUVpk0jtnC3wPKkcdwXxSJj+rm6dX7SPeyY/3Ol1uvazbMTRIjJV00sA
+              gCVZ8r6r3iI/VSOT+/xN99P9Y+9fQXCayfS1mnYHKUWxpB0l8cI1YsggVD5AvDeoiwIaEeS0mMZO
+              9GnPdEfr7ahUe776z/wZwhFwz4cY4eLymB+V3Pk1T64z2zxfb5/upzEbxfaExIJJaA88eSdX7dQU
+              STPTKlaJhmA4IJ+2T/bgl/X0ACECgYEA9X7MO0KFlLznQcsz/eiyANzjX3yZbskLcLDnpJPnhlH6
+              e8JXczxgcQKuCNE7M/MtCThfhE0dJMYBoBy/VyHGH83A6amaanChPLpPYZIg8I3va6/FZHpYLMi0
+              OKyZrMZr9BZfGdVcFs9VSHjHWzSdD91EEJLEI+tjZ8swZUbtEAkCgYEApNenT8BAMar93L6pGS7w
+              Z1v+etC1ctRau0EX4vLeeXT6CcEbi9Y3s7FWMyboii8dNSitFdX4QSaD6cOiojf+iEjsLYMmKtsS
+              9T1GvzQLkIocH+k9n50ksVCmdQ/H+pzNBwVq4PXzEVbJCYP6xI60LSDhNx3aPaCHFPLDx3uuSFMC
+              gYAnRLAAbqSVZR4MrSdU3wrSDoMkO/cC/I+i5/k1nx7yolxRvYVlfmvix830xRsWNTin9+d3bypR
+              Pob2CIMmudVKMww/lAyKKBfycc7OyaQRNnLso8IMT3GZQEVrp1gxhc+wzH9Lz5AaafG3VPJ2iVTy
+              O69ugztyj21oJd1I5e53mQKBgBcnJxvff+S6BKAds3iTDDcoR60OZX30b63/bZB11mOu13PJSMoy
+              U26MyPO0UlMeXPbbeLwpao4UD9EkplIslTalL28RDapVTOtfKPGwKLOrglnFE9+4Xa/+CPNGPStp
+              HK8QxrtEMFjOHLyWagFzncD87kUkj0O6qV563p7FM2x7AoGAIZInLNqywb88DbNJIeHtngqspu6x
+              fHLD3dzwE69mo9sqME5XlcdGLd4mOvMBsN1hKMu7fhAbQ7pEPYfgGrnHlKM0LwdtmCNpL+lF0qgA
+              uyYTjbqzl9bc+fk3CZVWCGHi8hNx4e6zeptTca1/BDevXK/jIMTQCW2cOtAQ9OY7J3o=
+              -----END RSA PRIVATE KEY-----" >> /home/.ssh/autorized_keys
 
   ELK: 
       Type: AWS::EC2::Instance
@@ -125,6 +194,29 @@ Resources:
         UserData:
             Fn::Base64: !Sub |
               apt install python
+              echo "-----BEGIN RSA PRIVATE KEY-----
+              MIIEogIBAAKCAQEAnhQIxa4ayKhZfkdDMyJpQDN7iunBPvWWE0JqF5C+Jyrbw+UOWmwixfDbdvyx
+              r669EpkHnNqgsbgR+Rkby7ClrTFM4akcwdkb5kPN7VDkBA0Ubc3JCJj4LG8o15Vdea7V+ju99njj
+              n/YP1mENd0po2IoA2L2nVp9ZcdFVw3K9194994c+xBbJQ1nIIjTTdsQ6nJrhjxT5YKo/pOHzJzbG
+              JSpBZz9/xjI8SqP5dEKnF0F02uupKV6nNcB2TNMj+Sy80ytUu89AIezs4shAakanlAhgH5V7nDkr
+              lnStz6iL3B1HUJTRUxdiDLIXa3DjScECdilBWZ2N3KDsZ5qc5Hy66wIDAQABAoIBAGBytM935Nuc
+              682CSVv/mNwVDUG6Ua/KQ6DImtZ596sKGUAyl0lQRP8kb6LvlrIsGSwptl1bf0QvnLexPCZRRySe
+              udvNRMB5aO5bXF95RUW7fUVpk0jtnC3wPKkcdwXxSJj+rm6dX7SPeyY/3Ol1uvazbMTRIjJV00sA
+              gCVZ8r6r3iI/VSOT+/xN99P9Y+9fQXCayfS1mnYHKUWxpB0l8cI1YsggVD5AvDeoiwIaEeS0mMZO
+              9GnPdEfr7ahUe776z/wZwhFwz4cY4eLymB+V3Pk1T64z2zxfb5/upzEbxfaExIJJaA88eSdX7dQU
+              STPTKlaJhmA4IJ+2T/bgl/X0ACECgYEA9X7MO0KFlLznQcsz/eiyANzjX3yZbskLcLDnpJPnhlH6
+              e8JXczxgcQKuCNE7M/MtCThfhE0dJMYBoBy/VyHGH83A6amaanChPLpPYZIg8I3va6/FZHpYLMi0
+              OKyZrMZr9BZfGdVcFs9VSHjHWzSdD91EEJLEI+tjZ8swZUbtEAkCgYEApNenT8BAMar93L6pGS7w
+              Z1v+etC1ctRau0EX4vLeeXT6CcEbi9Y3s7FWMyboii8dNSitFdX4QSaD6cOiojf+iEjsLYMmKtsS
+              9T1GvzQLkIocH+k9n50ksVCmdQ/H+pzNBwVq4PXzEVbJCYP6xI60LSDhNx3aPaCHFPLDx3uuSFMC
+              gYAnRLAAbqSVZR4MrSdU3wrSDoMkO/cC/I+i5/k1nx7yolxRvYVlfmvix830xRsWNTin9+d3bypR
+              Pob2CIMmudVKMww/lAyKKBfycc7OyaQRNnLso8IMT3GZQEVrp1gxhc+wzH9Lz5AaafG3VPJ2iVTy
+              O69ugztyj21oJd1I5e53mQKBgBcnJxvff+S6BKAds3iTDDcoR60OZX30b63/bZB11mOu13PJSMoy
+              U26MyPO0UlMeXPbbeLwpao4UD9EkplIslTalL28RDapVTOtfKPGwKLOrglnFE9+4Xa/+CPNGPStp
+              HK8QxrtEMFjOHLyWagFzncD87kUkj0O6qV563p7FM2x7AoGAIZInLNqywb88DbNJIeHtngqspu6x
+              fHLD3dzwE69mo9sqME5XlcdGLd4mOvMBsN1hKMu7fhAbQ7pEPYfgGrnHlKM0LwdtmCNpL+lF0qgA
+              uyYTjbqzl9bc+fk3CZVWCGHi8hNx4e6zeptTca1/BDevXK/jIMTQCW2cOtAQ9OY7J3o=
+              -----END RSA PRIVATE KEY-----" >> /home/.ssh/autorized_keys
 
   Bastion: 
       Type: AWS::EC2::Instance
@@ -150,6 +242,29 @@ Resources:
         UserData:
             Fn::Base64: !Sub |
               apt install python
+              echo "-----BEGIN RSA PRIVATE KEY-----
+              MIIEogIBAAKCAQEAnhQIxa4ayKhZfkdDMyJpQDN7iunBPvWWE0JqF5C+Jyrbw+UOWmwixfDbdvyx
+              r669EpkHnNqgsbgR+Rkby7ClrTFM4akcwdkb5kPN7VDkBA0Ubc3JCJj4LG8o15Vdea7V+ju99njj
+              n/YP1mENd0po2IoA2L2nVp9ZcdFVw3K9194994c+xBbJQ1nIIjTTdsQ6nJrhjxT5YKo/pOHzJzbG
+              JSpBZz9/xjI8SqP5dEKnF0F02uupKV6nNcB2TNMj+Sy80ytUu89AIezs4shAakanlAhgH5V7nDkr
+              lnStz6iL3B1HUJTRUxdiDLIXa3DjScECdilBWZ2N3KDsZ5qc5Hy66wIDAQABAoIBAGBytM935Nuc
+              682CSVv/mNwVDUG6Ua/KQ6DImtZ596sKGUAyl0lQRP8kb6LvlrIsGSwptl1bf0QvnLexPCZRRySe
+              udvNRMB5aO5bXF95RUW7fUVpk0jtnC3wPKkcdwXxSJj+rm6dX7SPeyY/3Ol1uvazbMTRIjJV00sA
+              gCVZ8r6r3iI/VSOT+/xN99P9Y+9fQXCayfS1mnYHKUWxpB0l8cI1YsggVD5AvDeoiwIaEeS0mMZO
+              9GnPdEfr7ahUe776z/wZwhFwz4cY4eLymB+V3Pk1T64z2zxfb5/upzEbxfaExIJJaA88eSdX7dQU
+              STPTKlaJhmA4IJ+2T/bgl/X0ACECgYEA9X7MO0KFlLznQcsz/eiyANzjX3yZbskLcLDnpJPnhlH6
+              e8JXczxgcQKuCNE7M/MtCThfhE0dJMYBoBy/VyHGH83A6amaanChPLpPYZIg8I3va6/FZHpYLMi0
+              OKyZrMZr9BZfGdVcFs9VSHjHWzSdD91EEJLEI+tjZ8swZUbtEAkCgYEApNenT8BAMar93L6pGS7w
+              Z1v+etC1ctRau0EX4vLeeXT6CcEbi9Y3s7FWMyboii8dNSitFdX4QSaD6cOiojf+iEjsLYMmKtsS
+              9T1GvzQLkIocH+k9n50ksVCmdQ/H+pzNBwVq4PXzEVbJCYP6xI60LSDhNx3aPaCHFPLDx3uuSFMC
+              gYAnRLAAbqSVZR4MrSdU3wrSDoMkO/cC/I+i5/k1nx7yolxRvYVlfmvix830xRsWNTin9+d3bypR
+              Pob2CIMmudVKMww/lAyKKBfycc7OyaQRNnLso8IMT3GZQEVrp1gxhc+wzH9Lz5AaafG3VPJ2iVTy
+              O69ugztyj21oJd1I5e53mQKBgBcnJxvff+S6BKAds3iTDDcoR60OZX30b63/bZB11mOu13PJSMoy
+              U26MyPO0UlMeXPbbeLwpao4UD9EkplIslTalL28RDapVTOtfKPGwKLOrglnFE9+4Xa/+CPNGPStp
+              HK8QxrtEMFjOHLyWagFzncD87kUkj0O6qV563p7FM2x7AoGAIZInLNqywb88DbNJIeHtngqspu6x
+              fHLD3dzwE69mo9sqME5XlcdGLd4mOvMBsN1hKMu7fhAbQ7pEPYfgGrnHlKM0LwdtmCNpL+lF0qgA
+              uyYTjbqzl9bc+fk3CZVWCGHi8hNx4e6zeptTca1/BDevXK/jIMTQCW2cOtAQ9OY7J3o=
+              -----END RSA PRIVATE KEY-----" >> /home/.ssh/autorized_keys
         
 Outputs:
   AnsibleID:
