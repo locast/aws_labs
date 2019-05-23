@@ -257,15 +257,6 @@ Resources:
           Key: Name
           Value: LoadBalancerSecurityGroupProd-mlm  
 
-  VPCPeeringConnection:  
-  Type: AWS::EC2::VPCPeeringConnection
-  Properties: 
-    PeerVpcId: !Ref VPCProd
-    Tags:
-      - Key: Name
-        Value: VpcPeeringConnection-mlm
-    VpcId: !Ref VPCTools
-
 Outputs:
 
   VPCIDProd:
