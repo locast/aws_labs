@@ -61,6 +61,7 @@ def lambda_handler(event, context):
         if target_tag_value == instance_tags[target_tag_key]:
 
             roles = instance_tags['role']
+            name = instance_tags['Name']
             #instances might haves many roles separated by: ","
             roles = roles.split(',')
             ansible_grps = [ '['+role+']\n' for role in roles ]
@@ -80,9 +81,7 @@ def lambda_handler(event, context):
                 logger.error(error)
                 inventory = []
 
-            #Ansible inventory template line
-            inventory_add_line = '{0} ansible_ssh_user={1} ansible_ssh_key={2}\n'.format(instance_ip, instance_user, instance_sshkey)
-
+           
             if debug:
                 logger.info('current_inventory: ' + str(inventory))
                 logger.info('ansible_grp: ' + str(ansible_grps))
@@ -90,6 +89,9 @@ def lambda_handler(event, context):
             
             for ansible_grp in ansible_grps:
                 # check if the group already is in inventory
+                #Ansible inventory template line
+                inventory_add_line = '{0} ansible_host={1} ansible_user={2} ansible_ssh_private_key_file={3}\n'.format(name, instance_ip, instance_user, instance_sshkey)
+
                 if ansible_grp in inventory:
 
                     if debug:
