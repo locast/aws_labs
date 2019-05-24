@@ -1,0 +1,10 @@
+---
+# vars for docker_ee install
+
+docker_ee_version : 18.09
+docker_user: ubuntu
+docker_ee_url: https://storebits.docker.com/ee/m/sub-0ae4bc0e-d1e4-44d9-bfc4-d2100e2ed9f6
+docker_lic_path: "~"
+docker_lic_name: "docker.lic"
+ucp_version: 3.1.7
+dtr_version: 2.6.6
