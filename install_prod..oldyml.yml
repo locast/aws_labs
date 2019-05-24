@@ -1,12 +1,15 @@
 
 #################
-vars:
+MyVars:
   docker_ee_version : 18.09
   docker_user: ubuntu
   docker_ee_url: https://storebits.docker.com/ee/m/sub-0ae4bc0e-d1e4-44d9-bfc4-d2100e2ed9f6
+  docker_lic_path: "~"
+  docker_lic_name: docker.lic
+  ucp_version: 3.1.7
+  dtr_version: 2.6.6
 
 - hosts: all
-  name: "install docker Entreprise"
   remote_user: root
   become: yes
   become_method: sudo
@@ -16,24 +19,31 @@ vars:
         update_cache: yes
         upgrade: dist
 
+- hosts: [manager, worker, dtr]
+  name: "install docker Entreprise"
+  remote_user: root
+  become: yes
+  become_method: sudo
+  vars_files:
+    - ansible_vars.yml
+  tasks:
     - name: Update + install packages
       apt:
         update_cache: yes
         name: 
           - apt-transport-https
           - ca-certificates
-          - lsb-core
           - curl
           - software-properties-common
         state: present
 
     - name: Add official GPG key
-      shell: curl -fsSL https://storebits.docker.com/ee/m/sub-0ae4bc0e-d1e4-44d9-bfc4-d2100e2ed9f6/ubuntu/gpg | sudo apt-key add -
+      shell: curl -fsSL {{ docker_ee_url }}/ubuntu/gpg | sudo apt-key add -
 
     - name: Set stable repository
-      shell: add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://storebits.docker.com/ee/m/sub-0ae4bc0e-d1e4-44d9-bfc4-d2100e2ed9f6/ubuntu $(lsb_release -cs) stable-18.09"
+      shell: add-apt-repository "deb [arch={{ ansible_architecture }}] {{ docker_ee_url }}/ubuntu {{ ansible_distribution_release }} stable-{{ docker_ee_version }}"
 
-    - name: Install Docker EE version 18.09
+    - name: Install Docker EE version {{ docker_ee_version }}
       apt: 
         update_cache: yes
         name: 
@@ -53,46 +63,66 @@ vars:
 
 - hosts: manager1
   name: "Init swarm and get tokens"
+  remote_user: root
+  become: yes
+  become_method: sudo
   tasks:
     - name: "create primary swarm manager"
-      shell: docker swarm init #--advertise-addr {{ ansible_eth0['ipv4']['address'] }}
+      shell: docker swarm init 
 
-    #  - name: "get docker swarm manager token"
-    #    shell: docker swarm join-token -q manager
-    #    register: manager_token
+    - name: "get docker swarm manager token"
+      shell: docker swarm join-token -q manager
+      register: manager_token
 
     - name: "get docker swarm worker token"
       shell: docker swarm join-token -q worker
       register: worker_token
 
 - hosts: manager
+  remote_user: root
+  become: yes
+  become_method: sudo
   tasks:
    - name: "join swarm as a manager"
      shell: "docker swarm join --token {{ hostvars['manager1']['manager_token']['stdout'] }} {{ hostvars['manager1']['ansible_eth0']['ipv4']['address'] }}:2377"
 
 
-- hosts: worker
+- hosts: [worker,dtr]
+  remote_user: root
+  become: yes
+  become_method: sudo
   tasks:
 
     - name: "join as a worker"
       shell: "docker swarm join --token {{ hostvars['manager1']['worker_token']['stdout'] }} {{ hostvars['manager1']['ansible_eth0']['ipv4']['address'] }}:2377"
 
 - hosts: manager1
-  name: "install ucp"
+  remote_user: root
+  become: yes
+  become_method: sudo
+  vars_files:
+    - ansible_vars.yml
   tasks:
     - name: "pull ucp"
-      shell: "docker image pull docker/ucp:3.1.7"
+      shell: "docker image pull docker/ucp:{{ ucp_version }}"
+    
+    - name: "copy docker licence"
+      copy:
+        src: "{{ docker_lic_path }}/{{ docker_lic_name }}"
+        dest: "~/{{ docker_lic_name }}"
 
     - name: "install ucp"
-      shell: "docker container run --rm -it --name ucp \
-              -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:3.1.7 install \
-               --host-address {{ ansible_eth0['ipv4']['address'] }} \
-               --admin-password Password1 \
-               --admin-username UCP         
-               "
-#               --license \ 
-#               --san  Load-balancers + bastion \
+      shell: "docker container run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:{{ ucp_version }} install \
+       --host-address {{ ansible_eth0['ipv4']['address'] }} \
+       --admin-password Password1 \
+       --admin-username UCP \
+       --license $(cat {{ docker_lic_name }}
+       " #--san  Load-balancers + bastion \            
 
 - hosts: dtr
+  remote_user: root
+  become: yes
+  become_method: sudo
   tasks:
     - name: 'install dtr'
+      shell: "docker run -it --rm docker/dtr:{{ dtr_version }} install --ucp-node {{ ansible_hostname }} --ucp-insecure-tls"
