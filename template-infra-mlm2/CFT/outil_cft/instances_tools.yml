@@ -75,7 +75,7 @@ Resources:
             -----END RSA PRIVATE KEY-----" >> /home/.ssh/autorized_keys
             apt install ansible
             git clone https://github.com/locast/aws_labs.git
-            ansible-playbook -i inventory.inv
+            cd ansible
             ansible-playbook -i inventory.inv full_install.yml
     
   Jenkins: 
