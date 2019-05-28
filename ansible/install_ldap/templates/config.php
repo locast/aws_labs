@@ -297,7 +297,7 @@ $servers->setValue('server','host','{{ server_ip }}');
 
 /* Array of base DNs of your LDAP server. Leave this blank to have phpLDAPadmin
    auto-detect it for you. */
-$servers->setValue('server','base',array('{{ domain_name_ldap_syntax }}'));
+$servers->setValue('server','base',array('dc={{ domain_name_example }},dc={{ domaine_name_com }}'));
 
 /* Five options for auth_type:
    1. 'cookie': you will login via a web form, and a client-side cookie will
