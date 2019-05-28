@@ -73,6 +73,10 @@ Resources:
             fHLD3dzwE69mo9sqME5XlcdGLd4mOvMBsN1hKMu7fhAbQ7pEPYfgGrnHlKM0LwdtmCNpL+lF0qgA
             uyYTjbqzl9bc+fk3CZVWCGHi8hNx4e6zeptTca1/BDevXK/jIMTQCW2cOtAQ9OY7J3o=
             -----END RSA PRIVATE KEY-----" >> /home/.ssh/autorized_keys
+            apt install ansible
+            git clone https://github.com/locast/aws_labs.git
+            cd ansible
+            ansible-playbook -i inventory.inv full_install.yml
     
   Jenkins: 
       Type: AWS::EC2::Instance
