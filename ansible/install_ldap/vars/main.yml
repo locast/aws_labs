@@ -1,5 +1,6 @@
 domain_name: "wakanda.local"
-domain_name_ldap_syntax: 'dc=wakanda,dc=local'
+domain_name_example: "wakanda"
+domaine_name_com: "local"
 server_ip: {{ ansible_eth0['ipv4']['address'] }}
 ldap_server_name: "Wakanda"
 ldap_admin_password: wakanda
