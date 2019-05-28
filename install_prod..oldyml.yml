@@ -98,12 +98,19 @@
       shell: >
         docker run --rm --name ucp --volume /var/run/docker.sock:/var/run/docker.sock 
         --volume "/tmp/{{ docker_lic_name }}:/config/docker_subscription.lic:ro" 
+        --env "UCP_ADMIN_USER={{ ucp_user }}"
+        --env "UCP_ADMIN_PASSWORD={{ ucp_password }}"
         docker/ucp:{{ ucp_version }} install
-        --env "UCP_ADMIN_USER=UCP"
-        --env "UCP_ADMIN_PASSWORD=Password1"
         --san "{{ ansible_host }}"
       #--host-address "{{ docker_swarm_listen_address | default(ansible_default_ipv4['address']) }}"
       #--san "{{ docker_ucp_lb }}"
+
+#### TODO  ####
+docker run -it --rm \
+  docker/ucp:2.6.0 join \
+  --ucp-node <ucp-node-name> \
+  --ucp-insecure-tls
+#############
 
 - hosts: dtr
   remote_user: root
@@ -117,30 +124,17 @@
         docker run -it --rm docker/dtr:{{ dtr_version }} install 
         --ucp-node "{{ ansible_hostname }}"
         --ucp-insecure-tls
+        --ucp-url "{{ hostvars['manager1']['ansible_eth0']['ipv4']['address'] }}:443"
+        --ucp-username {{ ucp_user }}
+        --ucp-password {{ ucp_password }}
 
+##### TODO ######
+docker run -it --rm \
+  docker/dtr:2.6.0 join \
+  --ucp-node <ucp-node-name> \
+  --ucp-insecure-tls
+#########
 
-########
-#MarchPas
-    - name: "copy docker licence"
-      copy:
-        src: "{{ docker_lic_path }}/{{ docker_lic_name }}"
-        dest: "~/{{ docker_lic_name }}"
-    - name: "install ucp"
-      shell: "docker container run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:{{ ucp_version }} install \
-       --host-address {{ ansible_eth0['ipv4']['address'] }} \
-       --admin-password Password1 \
-       --admin-username UCP \
-       --license $(cat {{ docker_lic_name }}) \
-       --san exemple.com
-       " #--san  Load-balancers + bastion \     
-#####################################"
-#AlaMano
-docker container run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:3.1.7 install \
-       --admin-password Password1 \
-       --admin-username UCP \
-       --san exemple.com
-       --license $(cat {{ docker_lic_name }} 
-#####################################
 
 - hosts: jenkins
   remote_user: root

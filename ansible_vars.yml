@@ -1,6 +1,5 @@
 ---
 # vars for docker_ee install
-
 docker_ee_version : 18.09
 docker_user: ubuntu
 docker_ee_url: https://storebits.docker.com/ee/m/sub-0ae4bc0e-d1e4-44d9-bfc4-d2100e2ed9f6
@@ -8,3 +7,20 @@ docker_lic_path: "~"
 docker_lic_name: "docker.lic"
 ucp_version: 3.1.7
 dtr_version: 2.6.6
+ucp_user: UCP
+ucp_password: Password1
+
+# vars for gitlab install
+gitlab_package: gitlab-ce
+gitlab_script_url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
+gitlab_host_config_file_path: "gitlab config template"
+gitlab_host_config_file_path: "{{ gitlab_host_config_path | default(inventory_hostname) }}/gitlab.rb.j2"
+gitlab_config_file_path: /etc/gitlab/gitlab.rb
+
+#gitlab_ssl_config_path: /etc/gitlab
+#gitlab_host_config_ssl_path: "{{ gitlab_host_config_path | default(inventory_hostname) }}/ssl"
+
+
+# vars for ldap install
+
+# vars for elk install
