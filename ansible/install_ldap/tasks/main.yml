@@ -1,0 +1,41 @@
+- name: Set hostname
+  hostname: 
+    name: {{ domain_name }}
+  become: yes
+
+- name: Add to hosts
+  shell: echo "{{ server_ip }} {{ domain_name }}" | tee -a /etc/hosts
+  become: yes
+
+- name: Install packages
+  apt:
+    update_cache: yes
+    name: 
+      - slapd
+      - ldap-utilis
+    state: present
+
+- name: Enable extension
+  shell: a2enconf php7.2-cgi
+  become: yes
+
+- name: Reload daemon
+  systemd:
+    daemon_reload: yes
+    name: apache2
+  become: yes
+
+- name: Install phpLDAPadmin
+  apt:
+    update_cache: yes
+    name: 
+      - phpldapadmin
+    state: present
+
+- name: Setup LDAP admin password
+  shell: slappasswd -s {{ ldap_admin_password }}
+
+- name: Copy template
+  template:
+    src: {{ template_source }}
+    dest: {{ template_destination }}
