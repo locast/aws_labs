@@ -141,6 +141,10 @@ docker run -it --rm \
   become: yes
   become_method: sudo
   tasks:
+    - name: "update and upgrade"
+      apt: 
+        update_cache: yes
+        upgrade: dist
     - name: Add Java repo
       apt_repository:
         validate_certs: no
@@ -160,8 +164,11 @@ docker run -it --rm \
           - openjdk-8-jdk
           - openjdk-8-source
           - jenkins
+        install_recommends: yes
         state: present
         update_cache: yes
+      retries: 3
+      delay: 20
     - name: Start & Enable Jenkins
       systemd:
         name: jenkins
@@ -215,7 +222,7 @@ docker run -it --rm \
     - name: Run script to check system and add repository for GitLab CE
       shell: "curl -L -s {{ gitlab_script_url }} | bash"
     - name: Install Gitlab CE
-      yum:
+      apt:
         name: "{{ gitlab_package }}"
         state: present
         update_cache: yes
@@ -251,3 +258,5 @@ docker run -it --rm \
   vars_files:
     - ansible_vars.yml
   tasks:
+    - roles:
+      role: ldap
