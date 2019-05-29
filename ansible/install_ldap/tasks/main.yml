@@ -1,0 +1,45 @@
+- name: Set hostname
+  hostname: 
+    name: "{{ domain_name }}"
+
+- name: Add to hosts
+  shell: echo "{{ ansible_eth0['ipv4']['address'] }} {{ domain_name }}" | tee -a /etc/hosts
+
+- name: Install packages
+  apt:
+    update_cache: yes
+    name: 
+      - slapd
+      - ldap-utils
+      - apache2
+      - php
+      - php-cgi
+      - libapache2-mod-php
+      - php-mbstring
+      - php-common
+      - php-pear
+    state: present
+
+- name: Enable extension
+  shell: a2enconf php7.2-cgi
+
+
+- name: Reload daemon
+  systemd:
+    daemon_reload: yes
+    name: apache2
+ 
+- name: Install phpLDAPadmin
+  apt:
+    update_cache: yes
+    name: 
+      - phpldapadmin
+    state: present
+
+- name: Setup LDAP admin password
+  shell: slappasswd -s "{{ ldap_admin_password }}"
+
+- name: Copy template
+  template:
+    src: "{{ template_source }}"
+    dest: "{{ template_destination }}"

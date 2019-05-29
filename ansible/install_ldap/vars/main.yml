@@ -1,0 +1,7 @@
+domain_name: "wakanda.local"
+domain_name_example: "wakanda"
+domaine_name_com: "local"
+ldap_server_name: "Wakanda"
+ldap_admin_password: wakanda
+template_source: config.php
+template_destination: ~/
