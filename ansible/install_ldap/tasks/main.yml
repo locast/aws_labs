@@ -38,4 +38,4 @@
 - name: Copy template
   template:
     src: "{{ template_source }}"
-    dest: "{{ template_destination }}""
+    dest: "{{ template_destination }}"
