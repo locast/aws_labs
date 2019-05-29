@@ -1,0 +1,51 @@
+## GitLab configuration settings
+##! This file is generated during initial installation and **is not** modified
+##! during upgrades.
+##! Check out the latest version of this file to know about the different
+##! settings that can be configured by this file, which may be found at:
+##! https://gitlab.com/gitlab-org/omnibus-gitlab/raw/master/files/gitlab-config-template/gitlab.rb.template
+
+
+## GitLab URL
+##! URL on which GitLab will be reachable.
+##! For more details on configuring external_url see:
+##! https://docs.gitlab.com/omnibus/settings/configuration.html#configuring-the-external-url-for-gitlab
+external_url 'http://54.146.165.75'
+
+## Roles for multi-instance GitLab
+##! The default is to have no roles enabled, which results in GitLab running as an all-in-one instance.
+##! Options:
+##!   redis_sentinel_role redis_master_role redis_slave_role geo_primary_role geo_secondary_role
+##! For more details on each role, see:
+##! https://docs.gitlab.com/omnibus/roles/README.html#roles
+##!
+# roles ['redis_sentinel_role', 'redis_master_role']
+
+## Legend
+##! The following notations at the beginning of each line may be used to
+##! differentiate between components of this file and to easily select them using
+##! a regex.
+##! ## Titles, subtitles etc
+##! ##! More information - Description, Docs, Links, Issues etc.
+##! Configuration settings have a single # followed by a single space at the
+##! beginning; Remove them to enable the setting.
+
+##! **Configuration settings below are optional.**
+##! **The values currently assigned are only examples and ARE NOT the default
+##!   values.**
+
+################################################################################
+################################################################################
+##                Configuration Settings for GitLab CE and EE                 ##
+################################################################################
+################################################################################
+
+################################################################################
+## gitlab.yml configuration
+##! Docs: https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/doc/settings/gitlab.yml.md
+################################################################################
+# gitlab_rails['gitlab_ssh_host'] = 'ssh.host_example.com'
+# gitlab_rails['time_zone'] = 'UTC'
+
+### Email Settings
+# gitlab_rails['gitlab_email_enabled'] = true
