@@ -283,7 +283,7 @@ $servers->newServer('ldap_pla');
 
 /* A convenient name that will appear in the tree viewer and throughout
    phpLDAPadmin to identify this LDAP server to users. */
-$servers->setValue('server','name','{{ ldap_server_name }}');
+$servers->setValue('server','name',"{{ ldap_server_name }}");
 
 /* Examples:
    'ldap.example.com',
@@ -297,7 +297,7 @@ $servers->setValue('server','host',"{{ ansible_eth0['ipv4']['address'] }}");
 
 /* Array of base DNs of your LDAP server. Leave this blank to have phpLDAPadmin
    auto-detect it for you. */
-$servers->setValue('server','base',array('dc={{ domain_name_example }},dc={{ domaine_name_com }}'));
+$servers->setValue('server','base',array('dc="{{ domain_name_example }}",dc="{{ domaine_name_com }}"'));
 
 /* Five options for auth_type:
    1. 'cookie': you will login via a web form, and a client-side cookie will
