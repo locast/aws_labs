@@ -4,7 +4,7 @@
   become: yes
 
 - name: Add to hosts
-  shell: echo "{{ server_ip }} {{ domain_name }}" | tee -a /etc/hosts
+  shell: echo "{{ ansible_eth0['ipv4']['address'] }} {{ domain_name }}" | tee -a /etc/hosts
   become: yes
 
 - name: Install packages
