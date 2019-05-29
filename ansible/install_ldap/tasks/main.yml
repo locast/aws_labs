@@ -1,6 +1,6 @@
 - name: Set hostname
   hostname: 
-    name: {{ domain_name }}
+    name: "{{ domain_name }}"
   become: yes
 
 - name: Add to hosts
@@ -33,9 +33,9 @@
     state: present
 
 - name: Setup LDAP admin password
-  shell: slappasswd -s {{ ldap_admin_password }}
+  shell: slappasswd -s "{{ ldap_admin_password }}""
 
 - name: Copy template
   template:
-    src: {{ template_source }}
-    dest: {{ template_destination }}
+    src: "{{ template_source }}"
+    dest: "{{ template_destination }}""
