@@ -33,6 +33,7 @@ Resources:
       VpcId: !Ref VPCTools
       AvailabilityZone: us-east-1a
       CidrBlock: !Ref PublicSubnetToolsCidr
+      MapPublicIpOnLaunch: yes
       Tags:
         - Key: Name
           Value: PublicSubnetTools-mlm
