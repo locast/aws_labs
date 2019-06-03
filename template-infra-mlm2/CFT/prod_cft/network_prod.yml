@@ -57,6 +57,7 @@ Resources:
       Tags:
         - Key: Name
           Value: PrivateSubnetProd-mlm
+    DependsOn: VPCProd
 
   InternetGatewayProd:
     Type: 'AWS::EC2::InternetGateway'
@@ -97,6 +98,7 @@ Resources:
       Tags:
         - Key: Name
           Value: PublicRouteTableProd-mlm
+    DependsOn: InternetGatewayProd
 
   LoadBalancerRouteTableProd:
     Type: 'AWS::EC2::RouteTable'
@@ -105,6 +107,7 @@ Resources:
       Tags:
         - Key: Name
           Value: LoadBalancerRouteTableProd-mlm
+    DependsOn: InternetGatewayProd
 
   PrivateRouteTableProd:
     Type: 'AWS::EC2::RouteTable'
@@ -113,6 +116,7 @@ Resources:
       Tags:
         - Key: Name
           Value: PrivateRouteTableProd-mlm
+    DependsOn: InternetGatewayProd
 
   PublicRouteProd:
     Type: 'AWS::EC2::Route'
@@ -120,6 +124,7 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGatewayProd
       RouteTableId: !Ref PublicRouteTableProd
+    DependsOn: InternetGatewayProd
 
   LoadBalancerRouteProd:
     Type: 'AWS::EC2::Route'
@@ -127,6 +132,7 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGatewayProd
       RouteTableId: !Ref LoadBalancerRouteTableProd
+    DependsOn: InternetGatewayProd
 
   PrivateRouteProd:
     Type: 'AWS::EC2::Route'
@@ -134,13 +140,15 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGatewayProd
       RouteTableId: !Ref PrivateRouteTableProd
+    DependsOn: InternetGatewayProd
       
-  PeeringRouteProd:
-    Type: AWS::EC2::Route
-    Properties:
-      DestinationCidrBlock: 172.30.1.0/24
-      RouteTableId: !Ref PrivateRouteTableProd
-      VpcPeeringConnectionId: !Ref VPCPeeringConnection
+  # PeeringRouteProd:
+  #   Type: AWS::EC2::Route
+  #   Properties:
+  #     DestinationCidrBlock: 172.30.1.0/24
+  #     RouteTableId: !Ref PrivateRouteTableProd
+  #     VpcPeeringConnectionId: !Ref VPCPeeringConnection
+  #   DependsOn: InternetGatewayProd
 
   PublicSubnetRouteTableAssociationProd:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
