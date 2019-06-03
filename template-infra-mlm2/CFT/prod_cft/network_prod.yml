@@ -33,6 +33,7 @@ Resources:
       VpcId: !Ref VPCProd
       AvailabilityZone: us-east-1a
       CidrBlock: !Ref PublicSubnetProdCidr
+      MapPublicIpOnLaunch: yes
       Tags:
         - Key: Name
           Value: PublicSubnetProd-mlm
