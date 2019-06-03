@@ -136,11 +136,11 @@ Resources:
       RouteTableId: !Ref PrivateRouteTableProd
       
   PeeringRouteProd:
-  Type: AWS::EC2::Route
-  Properties:
-    DestinationCidrBlock: 172.30.1.0/24
-    RouteTableId: !Ref PrivateRouteTableProd
-    VpcPeeringConnectionId: !Ref VPCPeeringConnection
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 172.30.1.0/24
+      RouteTableId: !Ref PrivateRouteTableProd
+      VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
   PublicSubnetRouteTableAssociationProd:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
