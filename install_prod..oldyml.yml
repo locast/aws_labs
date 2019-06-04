@@ -102,17 +102,27 @@
         --env "UCP_ADMIN_PASSWORD={{ ucp_password }}"
         docker/ucp:{{ ucp_version }} install
         --san "{{ ansible_host }}"
-      #--host-address "{{ docker_swarm_listen_address | default(ansible_default_ipv4['address']) }}"
-      #--san "{{ docker_ucp_lb }}"
+        #--san "{{ docker_ucp_lb }}"
 
-#### TODO  ####
-docker run -it --rm \
-  docker/ucp:2.6.0 join \
-  --ucp-node <ucp-node-name> \
-  --ucp-insecure-tls
+#### TODO  UCP join ####
+# - hosts: manager
+#   remote_user: root
+#   become: yes
+#   become_method: sudo
+#   vars_files:
+#     - ansible_vars.yml
+#   tasks:
+#     shell: > 
+#       docker run --rm -it --name ucp 
+#       f
+#     when: inventory_hostname != "manager1" 
+# docker run -it --rm \
+#   docker/ucp:2.6.0 join \
+#   --ucp-node <ucp-node-name> \
+#   --ucp-insecure-tls
 #############
 
-- hosts: dtr
+- hosts: dtr1
   remote_user: root
   become: yes
   become_method: sudo
@@ -128,11 +138,22 @@ docker run -it --rm \
         --ucp-username {{ ucp_user }}
         --ucp-password {{ ucp_password }}
 
-##### TODO ######
-docker run -it --rm \
-  docker/dtr:2.6.0 join \
-  --ucp-node <ucp-node-name> \
-  --ucp-insecure-tls
+##### TODO DTR join######
+- hosts: dtr
+  remote_user: root
+  become: yes
+  become_method: sudo
+  vars_files:
+    - ansible_vars.yml
+  tasks:
+    shell: > 
+      docker run --rm -it docker/dtr join
+      --ucp-node "{{ ansible_hostname }}"
+      --ucp-url "{{ hostvars['manager1']['ansible_eth0']['ipv4']['address'] }}:443"
+      --ucp-username {{ ucp_user }}
+      --ucp-password {{ ucp_password }}
+      --ucp-insecure-tls
+    when: inventory_hostname != "dtr1"
 #########
 
 
